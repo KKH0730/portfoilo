@@ -54,10 +54,6 @@ export default function Contact({ onLayout }: ContactProps) {
       <View style={styles.inner}>
         <View style={styles.header}>
           <Text style={styles.sectionLabel}>Contact</Text>
-          <Text style={styles.sectionTitle}>함께 만들어요</Text>
-          <Text style={styles.sectionSub}>
-            새로운 기회나 협업에 열려 있습니다. 편하게 연락 주세요 :)
-          </Text>
         </View>
 
         <View style={styles.contactGrid}>
@@ -99,7 +95,7 @@ const styles = StyleSheet.create({
     paddingBottom: 60,
   },
   inner: {
-    maxWidth: 800,
+    maxWidth: 1100,
     alignSelf: 'center',
     width: '100%',
   },
@@ -121,11 +117,6 @@ const styles = StyleSheet.create({
     color: C.text,
     letterSpacing: -0.8,
     marginBottom: 12,
-    textAlign: 'center',
-  },
-  sectionSub: {
-    fontSize: 16,
-    color: C.textSub,
     textAlign: 'center',
   },
   contactGrid: {

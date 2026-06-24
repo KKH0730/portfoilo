@@ -1,71 +1,118 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, LayoutChangeEvent } from 'react-native';
-import { career, CareerProject } from '../data/portfolio';
+import React, { useMemo, useRef, useState } from 'react';
+import { View, Text, Image, Animated, StyleSheet, LayoutChangeEvent, Dimensions } from 'react-native';
+import { career } from '../data/portfolio';
 import C from '../theme/colors';
 
-interface ProjectCardProps {
-  project: CareerProject;
-  accentColor: string;
+const companyLogos: Record<number, any> = {
+  1: require('../../assets/logos/mediaweb.jpg'),
+  2: require('../../assets/logos/keytalk.jpg'),
+  3: require('../../assets/logos/alphado.jpg'),
+};
+
+const steps = [...career].reverse(); // 알파도 → 키토크 → 미디어웹
+
+const WH = Dimensions.get('window').height;
+const NAV_H = 64;
+const CHAR_H = 90;
+const DOT_SIZE = 60;
+const DOT_COL_W = 80;
+const JOURNEY_PAD_TOP = 35;
+const ROW_PAD_TOP = 20;
+
+interface CareerProps {
+  onLayout: (e: LayoutChangeEvent) => void;
+  scrollY: Animated.Value;
+  sectionY: number;
 }
 
-function ProjectCard({ project, accentColor }: ProjectCardProps) {
-  const [expanded, setExpanded] = useState(false);
-
+function PersonIcon({ color }: { color: string }) {
   return (
-    <View style={styles.projectCard}>
-      <TouchableOpacity
-        style={styles.projectHeader}
-        onPress={() => setExpanded(!expanded)}
-        activeOpacity={0.7}
-      >
-        <View style={styles.projectTitleRow}>
-          <Text style={styles.projectTitle}>{project.title}</Text>
-          <Text style={styles.projectPeriod}>{project.period}</Text>
-        </View>
-        <Text style={styles.projectSummary}>{project.summary}</Text>
-        <View style={styles.expandBtn}>
-          <Text style={[styles.expandBtnText, { color: accentColor }]}>
-            {expanded ? '▲ 접기' : '▼ 자세히 보기'}
-          </Text>
-        </View>
-      </TouchableOpacity>
-
-      {expanded && (
-        <View style={styles.projectDetail}>
-          <Text style={styles.detailSectionTitle}>담당 업무</Text>
-          {project.tasks.map((task, i) => (
-            <View key={i} style={styles.listItem}>
-              <Text style={[styles.listBullet, { color: accentColor }]}>•</Text>
-              <Text style={styles.listText}>{task}</Text>
-            </View>
-          ))}
-
-          <Text style={[styles.detailSectionTitle, { marginTop: 16 }]}>성과</Text>
-          {project.results.map((result, i) => (
-            <View key={i} style={styles.resultItem}>
-              <Text style={[styles.resultBullet, { color: accentColor }]}>✓</Text>
-              <Text style={[styles.resultText, { color: accentColor }]}>{result}</Text>
-            </View>
-          ))}
-
-          <View style={styles.stackRow}>
-            {project.stack.map((s, i) => (
-              <View key={i} style={[styles.stackTag, { backgroundColor: accentColor + '12' }]}>
-                <Text style={[styles.stackTagText, { color: accentColor }]}>{s}</Text>
-              </View>
-            ))}
-          </View>
-        </View>
-      )}
+    <View style={person.wrap}>
+      <View style={[person.head, { backgroundColor: color }]} />
+      <View style={[person.body, { backgroundColor: color }]} />
+      <View style={person.legs}>
+        <View style={[person.leg, { backgroundColor: color }]} />
+        <View style={[person.leg, { backgroundColor: color }]} />
+      </View>
+      <View style={[person.shadow, { backgroundColor: color + '25' }]} />
     </View>
   );
 }
 
-interface CareerProps {
-  onLayout: (e: LayoutChangeEvent) => void;
+const person = StyleSheet.create({
+  wrap: { alignItems: 'center' },
+  head: { width: 26, height: 26, borderRadius: 13, marginBottom: 2 },
+  body: { width: 32, height: 24, borderRadius: 7, marginBottom: 2 },
+  legs: { flexDirection: 'row', gap: 5, marginBottom: 3 },
+  leg: { width: 11, height: 20, borderRadius: 5 },
+  shadow: { width: 36, height: 7, borderRadius: 10 },
+});
+
+type StepCompany = (typeof steps)[0];
+
+function StepCard({ company, isCurrent }: { company: StepCompany; isCurrent: boolean }) {
+  const color = company.color;
+  return (
+    <View style={[styles.card, { borderLeftColor: color }]}>
+      <View style={styles.cardPeriodRow}>
+        <Text style={[styles.cardPeriod, { color }]}>{company.period}</Text>
+        {isCurrent && (
+          <View style={[styles.nowBadge, { backgroundColor: color }]}>
+            <View style={styles.nowPulse} />
+            <Text style={styles.nowText}>재직 중</Text>
+          </View>
+        )}
+      </View>
+
+      <Text style={styles.cardCompany}>{company.company}</Text>
+      <Text style={styles.cardRole}>{company.role}</Text>
+
+      <View style={[styles.cardDivider, { backgroundColor: color + '25' }]} />
+
+      <View style={styles.highlightRow}>
+        {company.highlights.slice(0, 3).map((h, i) => (
+          <View key={i} style={[styles.highlightItem, i < 2 && { borderRightWidth: 1, borderRightColor: C.borderLight }]}>
+            <Text style={[styles.highlightValue, { color }]}>{h.value}</Text>
+            <Text style={styles.highlightLabel}>{h.label.replace('\n', ' ')}</Text>
+          </View>
+        ))}
+      </View>
+    </View>
+  );
 }
 
-export default function Career({ onLayout }: CareerProps) {
+export default function Career({ onLayout, scrollY, sectionY }: CareerProps) {
+  const pendingYs = useRef<Record<number, number>>({});
+  const [stepYs, setStepYs] = useState<number[]>([]);
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  const handleBlockLayout = (idx: number, e: LayoutChangeEvent) => {
+    pendingYs.current[idx] = JOURNEY_PAD_TOP + e.nativeEvent.layout.y;
+    if (Object.keys(pendingYs.current).length >= steps.length) {
+      const sorted = [0, 1, 2].map((i) => pendingYs.current[i] ?? i * 300);
+      setStepYs(sorted);
+      Animated.timing(fadeAnim, { toValue: 1, duration: 400, useNativeDriver: false }).start();
+    }
+  };
+
+  const characterTop = useMemo(() => {
+    if (stepYs.length < 3 || sectionY === 0) {
+      return scrollY.interpolate({ inputRange: [0, 1], outputRange: [-300, -300] });
+    }
+    const dotTopOffset = ROW_PAD_TOP;
+    const targets = stepYs.map((y) => y + dotTopOffset - CHAR_H);
+    return scrollY.interpolate({
+      inputRange: [
+        sectionY - WH + NAV_H,
+        sectionY - WH * 0.67 + NAV_H,
+        sectionY - WH * 0.33 + NAV_H,
+        Math.max(0, sectionY - NAV_H),
+      ],
+      outputRange: [targets[0], targets[1], targets[2], targets[2]],
+      extrapolate: 'clamp',
+    });
+  }, [stepYs, sectionY, scrollY]);
+
   return (
     <View style={styles.section} onLayout={onLayout} nativeID="career">
       <View style={styles.inner}>
@@ -74,37 +121,59 @@ export default function Career({ onLayout }: CareerProps) {
           <Text style={styles.sectionTitle}>경력 사항</Text>
         </View>
 
-        <View style={styles.timeline}>
-          {career.map((company, idx) => (
-            <View key={company.id} style={styles.timelineItem}>
-              <View style={styles.timelineLeft}>
-                <View style={[styles.timelineDot, { backgroundColor: company.color }]} />
-                {idx < career.length - 1 && <View style={styles.timelineLine} />}
-              </View>
+        <View style={styles.journey}>
+          {/* Center vertical line */}
+          <View style={styles.centerLineWrap} pointerEvents="none">
+            <View style={styles.centerLine} />
+          </View>
 
-              <View style={styles.companyBlock}>
-                <View style={styles.companyHeader}>
-                  <View style={[styles.companyBadge, { backgroundColor: company.color + '15' }]}>
-                    <Text style={[styles.companyBadgeText, { color: company.color }]}>
-                      {company.period}
-                    </Text>
-                  </View>
-                  <Text style={styles.companyName}>{company.company}</Text>
-                  <Text style={styles.companyRole}>{company.role}</Text>
+          {/* Animated character — centered on the line */}
+          <Animated.View style={[styles.characterWrap, { top: characterTop, opacity: fadeAnim }]}>
+            <PersonIcon color="#F97316" />
+          </Animated.View>
+
+          {/* Zigzag steps */}
+          {steps.map((company, idx) => {
+            const isLeft = idx % 2 === 0;
+            const isCurrent = company.period.includes('재직중');
+            return (
+              <View
+                key={company.id}
+                style={[styles.stepRow, idx === steps.length - 1 && { marginBottom: 0 }]}
+                onLayout={(e) => handleBlockLayout(idx, e)}
+              >
+                {/* Left side */}
+                <View style={styles.side}>
+                  {isLeft && <StepCard company={company} isCurrent={isCurrent} />}
                 </View>
 
-                <View style={styles.projectList}>
-                  {company.projects.map((project, pIdx) => (
-                    <ProjectCard
-                      key={pIdx}
-                      project={project}
-                      accentColor={company.color}
+                {/* Center dot */}
+                <View style={styles.dotCol}>
+                  <View
+                    style={[
+                      styles.dot,
+                      {
+                        backgroundColor: company.color + '15',
+                        borderColor: isCurrent ? company.color : company.color + '55',
+                        borderWidth: isCurrent ? 2.5 : 1.5,
+                      },
+                    ]}
+                  >
+                    <Image
+                      source={companyLogos[company.id]}
+                      style={styles.dotLogo}
+                      resizeMode="contain"
                     />
-                  ))}
+                  </View>
+                </View>
+
+                {/* Right side */}
+                <View style={styles.side}>
+                  {!isLeft && <StepCard company={company} isCurrent={isCurrent} />}
                 </View>
               </View>
-            </View>
-          ))}
+            );
+          })}
         </View>
       </View>
     </View>
@@ -118,12 +187,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 40,
   },
   inner: {
-    maxWidth: 1100,
+    maxWidth: 1000,
     alignSelf: 'center',
     width: '100%',
   },
   header: {
-    marginBottom: 56,
+    marginBottom: 14,
   },
   sectionLabel: {
     fontSize: 13,
@@ -139,173 +208,149 @@ const styles = StyleSheet.create({
     color: C.text,
     letterSpacing: -0.8,
   },
-  timeline: {
-    gap: 0,
+
+  journey: {
+    paddingTop: JOURNEY_PAD_TOP,
+    position: 'relative',
   },
-  timelineItem: {
-    flexDirection: 'row',
-    gap: 24,
-  },
-  timelineLeft: {
+
+  // Center vertical line
+  centerLineWrap: {
+    position: 'absolute',
+    top: JOURNEY_PAD_TOP,
+    bottom: 0,
+    left: 0,
+    right: 0,
     alignItems: 'center',
-    width: 20,
-    paddingTop: 10,
   },
-  timelineDot: {
-    width: 14,
-    height: 14,
-    borderRadius: 7,
-    zIndex: 1,
-  },
-  timelineLine: {
-    flex: 1,
+  centerLine: {
     width: 2,
-    backgroundColor: C.border,
-    marginTop: 6,
-    marginBottom: -6,
-  },
-  companyBlock: {
     flex: 1,
-    paddingBottom: 52,
+    backgroundColor: C.border,
   },
-  companyHeader: {
-    marginBottom: 24,
+
+  // Character
+  characterWrap: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    zIndex: 10,
   },
-  companyBadge: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: 12,
-    paddingVertical: 5,
-    borderRadius: 8,
-    marginBottom: 10,
+
+  // Step row
+  stepRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 52,
   },
-  companyBadgeText: {
+  side: {
+    flex: 1,
+    paddingHorizontal: 20,
+  },
+
+  // Dot
+  dotCol: {
+    width: DOT_COL_W,
+    alignItems: 'center',
+    paddingTop: ROW_PAD_TOP,
+    flexShrink: 0,
+  },
+  dot: {
+    width: DOT_SIZE,
+    height: DOT_SIZE,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+    zIndex: 2,
+    backgroundColor: C.white,
+  },
+  dotLogo: {
+    width: 50,
+    height: 50,
+  },
+
+  // Card
+  card: {
+    backgroundColor: C.white,
+    borderRadius: 18,
+    padding: 22,
+    borderWidth: 1,
+    borderColor: C.border,
+    borderLeftWidth: 4,
+    shadowColor: '#000',
+    shadowOpacity: 0.06,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 2,
+  },
+  cardPeriodRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 6,
+  },
+  cardPeriod: {
     fontSize: 12,
     fontWeight: '700',
     letterSpacing: 0.2,
   },
-  companyName: {
-    fontSize: 24,
+  nowBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 20,
+  },
+  nowPulse: {
+    width: 5,
+    height: 5,
+    borderRadius: 3,
+    backgroundColor: 'rgba(255,255,255,0.9)',
+  },
+  nowText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#fff',
+  },
+  cardCompany: {
+    fontSize: 20,
     fontWeight: '800',
     color: C.text,
-    letterSpacing: -0.4,
+    letterSpacing: -0.3,
     marginBottom: 4,
   },
-  companyRole: {
-    fontSize: 14,
+  cardRole: {
+    fontSize: 13,
     color: C.textMuted,
     fontWeight: '500',
   },
-  projectList: {
-    gap: 12,
+  cardDivider: {
+    height: 1,
+    marginVertical: 16,
   },
-  projectCard: {
-    backgroundColor: C.white,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: C.border,
-    overflow: 'hidden',
-    shadowColor: C.shadow,
-    shadowOpacity: 0.8,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 1,
-  },
-  projectHeader: {
-    padding: 20,
-  },
-  projectTitleRow: {
+  highlightRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 8,
-    flexWrap: 'wrap',
-    gap: 8,
   },
-  projectTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: C.text,
+  highlightItem: {
     flex: 1,
+    alignItems: 'center',
+    paddingHorizontal: 4,
+    gap: 3,
   },
-  projectPeriod: {
-    fontSize: 12,
+  highlightValue: {
+    fontSize: 18,
+    fontWeight: '800',
+    letterSpacing: -0.3,
+    textAlign: 'center',
+  },
+  highlightLabel: {
+    fontSize: 10,
     color: C.textMuted,
     fontWeight: '500',
-  },
-  projectSummary: {
-    fontSize: 14,
-    color: C.textSub,
-    lineHeight: 22,
-    marginBottom: 12,
-  },
-  expandBtn: {
-    alignSelf: 'flex-start',
-  },
-  expandBtnText: {
-    fontSize: 13,
-    fontWeight: '600',
-  },
-  projectDetail: {
-    paddingHorizontal: 20,
-    paddingBottom: 20,
-    borderTopWidth: 1,
-    borderTopColor: C.borderLight,
-    paddingTop: 16,
-  },
-  detailSectionTitle: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: C.textMuted,
-    letterSpacing: 0.5,
-    textTransform: 'uppercase',
-    marginBottom: 10,
-  },
-  listItem: {
-    flexDirection: 'row',
-    gap: 8,
-    marginBottom: 6,
-    paddingRight: 8,
-  },
-  listBullet: {
-    fontSize: 14,
-    fontWeight: '700',
-    lineHeight: 22,
-  },
-  listText: {
-    flex: 1,
-    fontSize: 14,
-    color: C.textSub,
-    lineHeight: 22,
-  },
-  resultItem: {
-    flexDirection: 'row',
-    gap: 8,
-    marginBottom: 6,
-  },
-  resultBullet: {
-    fontSize: 14,
-    fontWeight: '700',
-    lineHeight: 22,
-  },
-  resultText: {
-    fontSize: 14,
-    fontWeight: '600',
-    lineHeight: 22,
-    flex: 1,
-  },
-  stackRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 7,
-    marginTop: 16,
-  },
-  stackTag: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 6,
-  },
-  stackTagText: {
-    fontSize: 12,
-    fontWeight: '600',
+    textAlign: 'center',
+    lineHeight: 15,
   },
 });

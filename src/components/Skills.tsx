@@ -1,28 +1,69 @@
-import React from 'react';
-import { View, Text, StyleSheet, LayoutChangeEvent } from 'react-native';
-import { skills, aiTools } from '../data/portfolio';
+import React, { useRef } from 'react';
+import { View, Text, Image, StyleSheet, LayoutChangeEvent, Animated } from 'react-native';
+import { skills, aiTools, devEnvironment, SkillCategory as SkillCategoryType } from '../data/portfolio';
 import C from '../theme/colors';
 
-interface SkillCategoryProps {
-  category: string;
-  icon: string;
-  items: string[];
+function EnvChip({ tool }: { tool: (typeof devEnvironment)[0] }) {
+  const scale = useRef(new Animated.Value(1)).current;
+
+  const onHoverIn = () =>
+    Animated.spring(scale, { toValue: 1.08, useNativeDriver: true, speed: 30, bounciness: 6 }).start();
+  const onHoverOut = () =>
+    Animated.spring(scale, { toValue: 1, useNativeDriver: true, speed: 30, bounciness: 6 }).start();
+
+  return (
+    <Animated.View
+      style={[styles.envChip, { borderColor: tool.color + '35', transform: [{ scale }] }]}
+      {...({ onMouseEnter: onHoverIn, onMouseLeave: onHoverOut } as any)}
+    >
+      <View style={[styles.envChipIconWrap, { backgroundColor: tool.color + '12' }]}>
+        <Image source={tool.logo} style={styles.envChipLogo} resizeMode="contain" />
+      </View>
+      <Text style={styles.envChipName}>{tool.name}</Text>
+    </Animated.View>
+  );
 }
 
-function SkillCategory({ category, icon, items }: SkillCategoryProps) {
+function SkillCategoryCard({ category, icon, keyItems, items }: SkillCategoryType) {
   return (
     <View style={styles.categoryCard}>
       <View style={styles.categoryHeader}>
         <Text style={styles.categoryIcon}>{icon}</Text>
         <Text style={styles.categoryName}>{category}</Text>
       </View>
-      <View style={styles.tagList}>
-        {items.map((item, i) => (
-          <View key={i} style={styles.tag}>
-            <Text style={styles.tagText}>{item}</Text>
+
+      {/* Progress bars for key skills */}
+      <View style={styles.barList}>
+        {keyItems.map((item, i) => (
+          <View key={i} style={styles.barItem}>
+            <View style={styles.barLabelRow}>
+              <Text style={styles.barLabel}>{item.name}</Text>
+              {item.level !== undefined && (
+                <Text style={styles.barPct}>{item.level}%</Text>
+              )}
+            </View>
+            <View style={styles.barTrack}>
+              <View
+                style={[
+                  styles.barFill,
+                  { width: `${item.level ?? 80}%` as any },
+                ]}
+              />
+            </View>
           </View>
         ))}
       </View>
+
+      {/* Remaining items as tags */}
+      {items.length > 0 && (
+        <View style={styles.tagList}>
+          {items.map((item, i) => (
+            <View key={i} style={styles.tag}>
+              <Text style={styles.tagText}>{item}</Text>
+            </View>
+          ))}
+        </View>
+      )}
     </View>
   );
 }
@@ -42,13 +83,25 @@ export default function Skills({ onLayout }: SkillsProps) {
 
         <View style={styles.skillsGrid}>
           {skills.map((cat, i) => (
-            <SkillCategory
-              key={i}
-              category={cat.category}
-              icon={cat.icon}
-              items={cat.items}
-            />
+            <SkillCategoryCard key={i} {...cat} />
           ))}
+        </View>
+
+        {/* 개발 협업 환경 */}
+        <View style={styles.envSection}>
+          <Text style={styles.envTitle}>개발 협업 환경</Text>
+          <View style={styles.envChips}>
+            {(['개발 도구', '버전 관리 & CI/CD', '디자인', '협업 & 커뮤니케이션'] as const).flatMap(
+              (groupName, gi) => {
+                const tools = devEnvironment.filter((t) => t.group === groupName);
+                if (!tools.length) return [];
+                const chips = tools.map((tool, i) => (
+                  <EnvChip key={`${gi}-${i}`} tool={tool} />
+                ));
+                return chips;
+              }
+            )}
+          </View>
         </View>
 
         <View style={styles.aiSection}>
@@ -153,22 +206,103 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: C.text,
   },
+  // Progress bars
+  barList: {
+    gap: 10,
+    marginBottom: 14,
+  },
+  barItem: {},
+  barLabelRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 5,
+  },
+  barLabel: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: C.text,
+  },
+  barPct: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: C.accent,
+  },
+  barTrack: {
+    height: 6,
+    borderRadius: 4,
+    backgroundColor: C.accentDim,
+    overflow: 'hidden',
+  },
+  barFill: {
+    height: '100%',
+    borderRadius: 4,
+    backgroundColor: C.accent,
+  },
+
+  // Tags (remaining items)
   tagList: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 7,
+    borderTopWidth: 1,
+    borderTopColor: C.borderLight,
+    paddingTop: 12,
   },
   tag: {
-    paddingHorizontal: 11,
-    paddingVertical: 5,
-    borderRadius: 7,
-    backgroundColor: C.accentDim,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 6,
+    backgroundColor: C.bgAlt,
   },
   tagText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: C.accent,
+    fontSize: 11,
+    fontWeight: '500',
+    color: C.textSub,
   },
+  // Dev Environment
+  envSection: {
+    marginBottom: 40,
+  },
+  envTitle: {
+    fontSize: 20,
+    fontWeight: '800',
+    color: C.text,
+    letterSpacing: -0.3,
+    marginBottom: 20,
+  },
+  envChips: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+  },
+  envChip: {
+    flex: 1,
+    alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 14,
+    borderRadius: 14,
+    borderWidth: 1.5,
+    backgroundColor: C.white,
+  },
+  envChipIconWrap: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  envChipLogo: {
+    width: 30,
+    height: 30,
+  },
+  envChipName: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: C.text,
+    textAlign: 'center',
+  },
+
   aiSection: {
     backgroundColor: C.white,
     borderRadius: 20,

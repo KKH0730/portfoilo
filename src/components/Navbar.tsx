@@ -36,15 +36,6 @@ export default function Navbar({ onNavigate }: NavbarProps) {
   return (
     <View style={[styles.wrapper, scrolled && styles.wrapperScrolled]}>
       <View style={styles.inner}>
-        <TouchableOpacity onPress={() => handleNav('hero')} activeOpacity={0.8}>
-          <View style={styles.logo}>
-            <View style={styles.logoIcon}>
-              <Text style={styles.logoIconText}>K</Text>
-            </View>
-            <Text style={styles.logoText}>김경호</Text>
-          </View>
-        </TouchableOpacity>
-
         <View style={styles.links}>
           {NAV_LINKS.map((link) => (
             <TouchableOpacity
@@ -72,7 +63,7 @@ export default function Navbar({ onNavigate }: NavbarProps) {
 
 const styles = StyleSheet.create({
   wrapper: {
-    position: Platform.OS === 'web' ? 'fixed' : 'relative',
+    position: Platform.OS === 'web' ? ('fixed' as any) : 'relative',
     top: 0,
     left: 0,
     right: 0,
@@ -91,35 +82,11 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     paddingHorizontal: 32,
     maxWidth: 1200,
     alignSelf: 'center',
     width: '100%',
-  },
-  logo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-  logoIcon: {
-    width: 32,
-    height: 32,
-    borderRadius: 8,
-    backgroundColor: C.accent,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  logoIconText: {
-    color: C.white,
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  logoText: {
-    color: C.text,
-    fontSize: 17,
-    fontWeight: '700',
-    letterSpacing: -0.3,
   },
   links: {
     flexDirection: 'row',

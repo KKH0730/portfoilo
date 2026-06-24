@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text, StyleSheet, LayoutChangeEvent } from 'react-native';
-import { stats } from '../data/portfolio';
 import C from '../theme/colors';
 
 interface Pillar {
@@ -52,22 +51,7 @@ export default function About({ onLayout }: AboutProps) {
       <View style={styles.inner}>
         <View style={styles.header}>
           <Text style={styles.sectionLabel}>About</Text>
-          <Text style={styles.sectionTitle}>주도적으로 성과를 만드는 개발자입니다</Text>
-          <Text style={styles.sectionDesc}>
-            아키텍처 설계부터 CI/CD 자동화, AI 도구 활용까지 — 개발 전반을 주도합니다.
-          </Text>
-        </View>
-
-        <View style={styles.statsRow}>
-          {stats.map((stat, i) => (
-            <View
-              key={i}
-              style={[styles.statItem, i < stats.length - 1 && styles.statItemBorder]}
-            >
-              <Text style={styles.statValue}>{stat.value}</Text>
-              <Text style={styles.statLabel}>{stat.label}</Text>
-            </View>
-          ))}
+          <Text style={styles.sectionTitle}>아키텍처 설계부터 CI/CD 자동화, AI 활용까지</Text>
         </View>
 
         <View style={styles.pillarsGrid}>
@@ -112,47 +96,6 @@ const styles = StyleSheet.create({
     color: C.text,
     letterSpacing: -0.8,
     marginBottom: 16,
-  },
-  sectionDesc: {
-    fontSize: 16,
-    color: C.textSub,
-    lineHeight: 28,
-    maxWidth: 600,
-  },
-  statsRow: {
-    flexDirection: 'row',
-    backgroundColor: C.white,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: C.border,
-    overflow: 'hidden',
-    marginBottom: 48,
-    shadowColor: C.shadow,
-    shadowOpacity: 1,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 2,
-  },
-  statItem: {
-    flex: 1,
-    alignItems: 'center',
-    paddingVertical: 28,
-  },
-  statItemBorder: {
-    borderRightWidth: 1,
-    borderRightColor: C.border,
-  },
-  statValue: {
-    fontSize: 34,
-    fontWeight: '800',
-    color: C.accent,
-    letterSpacing: -0.5,
-    marginBottom: 6,
-  },
-  statLabel: {
-    fontSize: 13,
-    color: C.textSub,
-    fontWeight: '500',
   },
   pillarsGrid: {
     flexDirection: 'row',

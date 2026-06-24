@@ -8,6 +8,7 @@ export interface PersonalInfo {
   github: string;
   blog: string;
   headline: string;
+  quote: string;
   about: string[];
 }
 
@@ -25,12 +26,18 @@ export interface CareerProject {
   stack: string[];
 }
 
+export interface CareerHighlight {
+  value: string;
+  label: string;
+}
+
 export interface CareerCompany {
   id: number;
   company: string;
   period: string;
   role: string;
   color: string;
+  highlights: CareerHighlight[];
   projects: CareerProject[];
 }
 
@@ -46,7 +53,9 @@ export interface FeaturedProject {
   period: string;
   category: string;
   categoryColor: string;
+  logo: any;
   description: string;
+  features: string[];
   highlights: Highlight[];
   stack: string[];
 }
@@ -54,17 +63,25 @@ export interface FeaturedProject {
 export interface AdditionalProject {
   title: string;
   period: string;
+  category: '개인 프로젝트' | '사이드 프로젝트' | 'AI툴';
   type: string;
   typeColor: string;
+  logo?: any;
   description: string;
   stack: string[];
   highlight: string;
 }
 
+export interface SkillItem {
+  name: string;
+  level?: number; // 0-100, if set, shown as progress bar
+}
+
 export interface SkillCategory {
   category: string;
   icon: string;
-  items: string[];
+  keyItems: SkillItem[]; // top 5 shown as progress bars
+  items: string[];       // remaining shown as tags
 }
 
 export interface AiTool {
@@ -72,6 +89,14 @@ export interface AiTool {
   role: string;
   color: string;
   usages: string[];
+}
+
+export interface DevTool {
+  name: string;
+  group: string;
+  color: string;
+  logo: any;
+  description: string;
 }
 
 export const personal: PersonalInfo = {
@@ -84,6 +109,7 @@ export const personal: PersonalInfo = {
   github: 'https://github.com/KKH0730',
   blog: 'https://smashandroid.tistory.com',
   headline: '서비스의 성장을 함께 만드는\nAndroid Developer',
+  quote: '명확한 목표는 방향을 잃지 않게 하고, 그 길을 따라가는 힘을 준다.',
   about: [
     'Kotlin과 Clean Architecture를 기반으로 안정적이고 확장 가능한 Android 서비스를 만들어왔습니다.',
     'CI/CD 자동화, 결제 시스템 최적화, 레거시 전환 등 실제 비즈니스 성과로 이어지는 개발을 추구합니다.',
@@ -93,8 +119,8 @@ export const personal: PersonalInfo = {
 
 export const stats: Stat[] = [
   { value: '5년+', label: '개발 경력' },
-  { value: '9개', label: '앱 서비스 경험' },
-  { value: '90%↓', label: '결제 오류 감소' },
+  { value: '10개+', label: '앱 서비스 경험' },
+  { value: '50만+', label: '누적 앱 설치' },
 ];
 
 export const career: CareerCompany[] = [
@@ -103,7 +129,13 @@ export const career: CareerCompany[] = [
     company: '미디어웹',
     period: '2026.04 ~ 재직중',
     role: 'Android Developer',
-    color: '#7C6FFF',
+    color: '#F97316',
+    highlights: [
+      { value: '35만+', label: '누적\n다운로드' },
+      { value: '90%↓', label: '결제 오류\n발생률 감소' },
+      { value: '7,000+', label: 'PC방 매장\n주방 앱 도입' },
+      { value: '400만원+', label: '월 광고 수익\n(애드팝콘)' },
+    ],
     projects: [
       {
         title: '피카오더 주방용 앱 개발',
@@ -184,7 +216,13 @@ export const career: CareerCompany[] = [
     company: '키토크에이아이 (구 마이셀럽스)',
     period: '2022.05 ~ 2024.11',
     role: 'Android Developer',
-    color: '#22D3B8',
+    color: '#7C3AED',
+    highlights: [
+      { value: '10만+', label: '누적\n다운로드' },
+      { value: '30%↓', label: '트래픽\n절감' },
+      { value: 'Top 4', label: 'Product Hunt\n일별 랭킹' },
+      { value: '90%↓', label: 'CS 인입\n감소' },
+    ],
     projects: [
       {
         title: '마이무비(Maimovie) 앱 개발 및 유지보수',
@@ -254,7 +292,12 @@ export const career: CareerCompany[] = [
     company: '알파도 홀딩스',
     period: '2021.03 ~ 2022.04',
     role: 'Android Developer',
-    color: '#F97316',
+    color: '#EC4899',
+    highlights: [
+      { value: '5천+', label: '누적\n다운로드' },
+      { value: '20%↓', label: '빌드시간\n단축' },
+      { value: '15%↑', label: '소변검사\n정확도 향상' },
+    ],
     projects: [
       {
         title: 'AlphaDo Pet+ 앱 개발',
@@ -304,16 +347,22 @@ export const featuredProjects: FeaturedProject[] = [
     company: '미디어웹',
     period: '2025 ~ 2026',
     category: '회사 프로젝트',
-    categoryColor: '#7C6FFF',
+    categoryColor: '#F97316',
+    logo: require('../../assets/project-logos/picaplay.png'),
     description:
-      '피카 PC방 서비스의 Android 앱 개발. 7,000+ 매장 도입 주방 앱 단독 개발, 소셜 로그인 계정 통합, AI 기반 CI/CD 자동화, 결제 오류 90% 감소까지 핵심 기능 전반을 담당했습니다.',
+      '피카 PC방 서비스의 Android 앱 개발. 7,000+ 매장 도입 주방 앱 단독 개발부터 소셜 로그인 계정 통합, AI 기반 CI/CD 자동화까지 핵심 기능 전반을 담당했습니다.',
+    features: [
+      'PC방 7,000+ 매장 도입 주방 앱 단독 개발 (FCM 실시간 알림, DiffUtil 최적화)',
+      '소셜 로그인 4종 계정 통합 (Google·Naver·Kakao·Apple OAuth)',
+      'AI 기반 CI/CD 파이프라인 구축 (코드 리뷰·릴리즈 노트 자동화)',
+      '결제 오류 추적 및 개선 (Firebase Crashlytics 로그 분석)',
+    ],
     highlights: [
       { icon: '📱', text: '앱 설치 19.3% 증가 (30만 → 35.8만)' },
-      { icon: '🏪', text: 'PC방 7,000+ 매장 주방 앱 도입' },
       { icon: '💳', text: '결제 오류 발생률 90% 감소' },
-      { icon: '🤖', text: 'AI 기반 CI/CD 자동화 파이프라인 구축' },
+      { icon: '💰', text: '광고 수익 월 400만원+' },
     ],
-    stack: ['Kotlin', 'MVVM', 'Coroutines', 'StateFlow', 'FCM', 'Firebase', 'OAuth 2.0', 'GitLab CI/CD', 'Claude AI'],
+    stack: ['Kotlin', 'MVVM', 'Hilt', 'Jetpack Compose', 'Coroutine', 'Flow', 'Retrofit2', 'OkHttp3', 'CameraX', 'ML Kit', 'FCM', 'Firebase', 'AdPopcorn SSP', 'OAuth 2.0', 'GitLab CI/CD', 'Claude AI'],
   },
   {
     id: 2,
@@ -321,16 +370,22 @@ export const featuredProjects: FeaturedProject[] = [
     company: '키토크에이아이',
     period: '2022 ~ 2023',
     category: '회사 프로젝트',
-    categoryColor: '#22D3B8',
+    categoryColor: '#7C3AED',
+    logo: require('../../assets/project-logos/maimovie.webp'),
     description:
-      '영화·방송 추천 서비스 Android 앱 개발 및 유지보수. Java → Kotlin 전환, MVP → Clean Architecture + MVVM 전환, LLM 기반 AI 기능 추가, 트래픽 최적화까지 전반적인 품질 개선을 담당했습니다.',
+      '영화·방송 추천 서비스 Android 앱 개발 및 유지보수. Java → Kotlin, MVP → Clean Architecture 전환과 LLM 기반 AI 기능 추가, 트래픽 최적화를 담당했습니다.',
+    features: [
+      'Java → Kotlin 전환 및 MVP → Clean Architecture + MVVM 리팩토링',
+      'LLM 기반 AI 작가 신규 기능 개발',
+      '메시지 캐싱 + Gzip 압축으로 트래픽 최적화',
+      'CI/CD 자동화 구축 (Jenkins + GitLab)',
+    ],
     highlights: [
       { icon: '📥', text: '누적 다운로드 10만+' },
-      { icon: '🔄', text: 'MVP → Clean Architecture + MVVM 전환' },
-      { icon: '📉', text: '트래픽 30% 절감 (캐싱 + Gzip 압축)' },
-      { icon: '🤖', text: 'LLM 기반 AI 작가 신규 기능 추가' },
+      { icon: '📉', text: '트래픽 30% 절감' },
+      { icon: '🤖', text: 'LLM 기반 AI 작가 기능 추가' },
     ],
-    stack: ['Kotlin', 'Clean Architecture', 'MVVM', 'WebSocket', 'In-app Billing', 'Firebase', 'Jenkins', 'Gitlab'],
+    stack: ['Kotlin', 'MVVM', 'Hilt', 'AAC', 'Databinding', 'RxJava', 'Coroutine', 'Retrofit2', 'OkHttp3', 'WebSocket', 'In-app Billing', 'Firebase', 'Jenkins', 'GitLab'],
   },
   {
     id: 3,
@@ -338,78 +393,99 @@ export const featuredProjects: FeaturedProject[] = [
     company: '알파도 홀딩스',
     period: '2021 ~ 2022',
     category: '회사 프로젝트',
-    categoryColor: '#F97316',
+    categoryColor: '#EC4899',
+    logo: require('../../assets/project-logos/alphado-pet.webp'),
     description:
-      '반려동물 건강 스마트 관리 앱 전체 개발. 소변검사 키트 카메라 ROI 추출, AI 기반 반려동물 질병 진단, Wi-Fi 내시경 카메라 연동, 중·영·일 3개 국어 지원 기능을 구현했습니다.',
+      '반려동물 건강 스마트 관리 앱 전체 개발. 소변검사 키트 카메라 ROI 추출, AI 기반 질병 진단, e-commerce 결제·멤버십 구독 기능을 구현했습니다.',
+    features: [
+      '소변검사 키트 카메라 ROI 추출 기능 개발 (정확도 15% 향상)',
+      'AI 기반 반려동물 신체 질병 진단 기능 개발',
+      'e-commerce 결제 및 멤버십 구독 기능 개발',
+      '중국어·영어·일본어 다국어 지원',
+    ],
     highlights: [
       { icon: '📥', text: '누적 다운로드 5천+' },
-      { icon: '🔬', text: '소변검사 ROI 정확도 15% 향상' },
-      { icon: '🌍', text: '중국어·영어·일본어 다국어 지원' },
-      { icon: '⚡', text: '빌드시간 최대 20% 단축 최적화' },
+      { icon: '🔬', text: '소변검사 정확도 15% 향상' },
+      { icon: '⚡', text: '빌드시간 20% 단축' },
+      { icon: '🌍', text: '3개 국어 다국어 지원' },
     ],
-    stack: ['Kotlin', 'MVVM', 'Hilt', 'RxJava', 'OpenCV', 'Firebase', 'Coroutine', 'Retrofit2'],
+    stack: ['Kotlin', 'MVVM', 'Hilt', 'AAC', 'Databinding', 'RxJava', 'Coroutine', 'Retrofit2', 'OkHttp3', 'OpenCV', 'In-app Billing', 'Firebase'],
   },
 ];
 
 export const additionalProjects: AdditionalProject[] = [
-  {
-    title: 'TradeWave',
-    period: '2024.12 ~ 2025.02',
-    type: '개인 프로젝트',
-    typeColor: '#7C6FFF',
-    description:
-      '암호화폐 시세 확인 및 자동 매매 앱. WebSocket 실시간 시세, 백테스트 기능, Foreground Service 기반 자동 매매 로직 구현.',
-    stack: ['Kotlin', 'Jetpack Compose', 'Clean Architecture', 'WebSocket', 'Firebase'],
-    highlight: '자동 매매 수익률 10%+',
-  },
-  {
-    title: '처음부터 울쎄라',
-    period: '2024.04 ~ 2024.07',
-    type: '사이드 프로젝트',
-    typeColor: '#22D3B8',
-    description:
-      '피부 시술 업체 외주 앱. QR 코드 포인트 적립, 포인트 몰, FCM 알림. 5인 팀 협업 (기획·디자인·Android·iOS·백엔드).',
-    stack: ['Kotlin', 'Clean Architecture', 'Hilt', 'Flow', 'FCM', 'Retrofit2'],
-    highlight: '누적 다운로드 5만+',
-  },
-  {
-    title: '마이셀럽스 스타',
-    period: '2023.09 ~ 2024.02',
-    type: '회사 프로젝트',
-    typeColor: '#F97316',
-    description: '스타 팬덤 엔터테인먼트 앱 유지보수. 결제 시스템 개선, Tnk 광고 수익 추가, OAuth 소셜 로그인 구현.',
-    stack: ['Kotlin', 'Hilt', 'Coroutine', 'Flow', 'In-app Billing', 'Firebase'],
-    highlight: 'CS 90% 이상 감소',
-  },
-  {
-    title: '딥서치 (Deep Search)',
-    period: '2023.01 ~ 2023.02',
-    type: '회사 프로젝트',
-    typeColor: '#22D3B8',
-    description:
-      '취향 기반 영화·방송 추천 하이브리드 앱. Product Hunt 출품작으로 단기간 글로벌 주목을 받은 프로젝트.',
-    stack: ['Kotlin', 'MVP', 'AAC', 'Firebase', 'Jenkins', 'Gitlab'],
-    highlight: 'Product Hunt 일별 4위',
-  },
+  // 개인 프로젝트
   {
     title: '틀린그림쏙쏙',
     period: '2022.10 ~ 2023.03',
-    type: '개인 프로젝트',
+    category: '개인 프로젝트',
+    type: '게임',
     typeColor: '#7C6FFF',
+    logo: require('../../assets/project-logos/teurin-geurim.webp'),
     description:
       '두 이미지의 차이점 찾기 퍼즐 게임 앱. OpenCV로 차이점 자동 검출, Jetpack Compose 첫 적용 프로젝트.',
     stack: ['Kotlin', 'Jetpack Compose', 'OpenCV', 'Hilt', 'Firebase', 'Admob'],
     highlight: 'Jetpack Compose 첫 도입',
   },
   {
+    title: 'TradeWave',
+    period: '2024.12 ~ 2025.02',
+    category: '개인 프로젝트',
+    type: '투자',
+    typeColor: '#7C6FFF',
+    logo: require('../../assets/project-logos/tradewave.webp'),
+    description:
+      '암호화폐 시세 확인 및 자동 매매 앱. WebSocket 실시간 시세, 백테스트 기능, Foreground Service 기반 자동 매매 로직 구현.',
+    stack: ['Kotlin', 'Jetpack Compose', 'Clean Architecture', 'WebSocket', 'Firebase'],
+    highlight: '자동 매매 수익률 10%+',
+  },
+  {
     title: '털뭉치들',
     period: '2021.02 ~ 2021.03',
-    type: '개인 프로젝트',
+    category: '개인 프로젝트',
+    type: 'SNS',
     typeColor: '#7C6FFF',
+    logo: require('../../assets/project-logos/teolmungchi.webp'),
     description:
       '반려동물 사진·일상 공유 SNS 앱. 커뮤니티, 채팅, 팔로잉·팔로우, FCM 전송 기능 전체를 1인 기획·개발·서버 담당.',
     stack: ['Kotlin', 'MVVM', 'Firebase', 'Firestore', 'Realtime Database', 'Koin'],
     highlight: '기획·개발·서버 1인 전담',
+  },
+  // 사이드 프로젝트
+  {
+    title: '처음부터 울쎄라',
+    period: '2024.04 ~ 2024.07',
+    category: '사이드 프로젝트',
+    type: '외주',
+    typeColor: '#22D3B8',
+    logo: require('../../assets/project-logos/ulthera.webp'),
+    description:
+      '피부 시술 업체 외주 앱. QR 코드 포인트 적립, 포인트 몰, FCM 알림. 5인 팀 협업 (기획·디자인·Android·iOS·백엔드).',
+    stack: ['Kotlin', 'Clean Architecture', 'Hilt', 'Flow', 'FCM', 'Retrofit2'],
+    highlight: '누적 다운로드 5만+',
+  },
+  // AI툴
+  {
+    title: 'JiraPilot',
+    period: '2026.04 ~ 2026.05',
+    category: 'AI툴',
+    type: 'AI 도구',
+    typeColor: '#F97316',
+    description:
+      '기획서를 AI로 분석하여 Jira 이슈(에픽·스토리·서브태스크)를 자동 생성하는 내부 개발 도구. Gemini Function Calling 적용.',
+    stack: ['React 19', 'TypeScript', 'Node.js', 'Gemini API', 'Jira REST API', 'SSE'],
+    highlight: '이슈 등록 반복 작업 자동화',
+  },
+  {
+    title: 'Cowork-ai',
+    period: '2026.03 ~ 2026.05',
+    category: 'AI툴',
+    type: 'AI 도구',
+    typeColor: '#F97316',
+    description:
+      '멀티 LLM 에이전트 시스템으로 Android 개발 전 주기를 자동화하는 내부 AI 협업 플랫폼. 리드·개발·테스터 에이전트 협업으로 개발 생산성 5배 향상.',
+    stack: ['Kotlin', 'Jetpack Compose', 'Claude Code CLI', 'Gemini AI', 'Hilt', 'Espresso'],
+    highlight: '개발 생산성 5배 향상',
   },
 ];
 
@@ -417,49 +493,150 @@ export const skills: SkillCategory[] = [
   {
     category: '언어',
     icon: '💻',
-    items: ['Kotlin', 'Java', 'TypeScript', 'Dart', 'React Native'],
+    keyItems: [
+      { name: 'Kotlin', level: 95 },
+      { name: 'Java', level: 75 },
+      { name: 'Swift', level: 65 },
+      { name: 'TypeScript', level: 60 },
+      { name: 'Dart', level: 60 },
+    ],
+    items: [],
   },
   {
     category: '플랫폼',
     icon: '📱',
-    items: ['Android (XML)', 'Jetpack Compose', 'Flutter'],
+    keyItems: [
+      { name: 'Android (XML)', level: 95 },
+      { name: 'Jetpack Compose', level: 95 },
+      { name: 'React Native', level: 70 },
+      { name: 'Flutter', level: 70 },
+    ],
+    items: [],
   },
   {
     category: '아키텍처',
     icon: '🏗️',
-    items: ['Clean Architecture', 'MVVM', 'MVP', 'MVC', 'MVI'],
+    keyItems: [
+      { name: 'Clean Architecture', level: 95 },
+      { name: 'MVVM', level: 95 },
+      { name: 'MVP', level: 90 },
+      { name: 'MVI', level: 90 },
+      { name: 'MVC', level: 90 },
+    ],
+    items: [],
   },
   {
     category: 'Android 라이브러리',
     icon: '🤖',
-    items: [
-      'Coroutine', 'Flow / StateFlow', 'Hilt', 'Room', 'Paging3', 'Retrofit2',
-      'OkHttp3', 'Glide', 'Lottie', 'Databinding', 'AAC', 'RxJava',
-      'In-app Billing', 'Admob', 'OpenCV',
+    keyItems: [
+      { name: 'Coroutine / Flow', level: 90 },
+      { name: 'Hilt', level: 85 },
+      { name: 'Retrofit2 / OkHttp3', level: 90 },
+      { name: 'Room', level: 80 },
+      { name: 'In-app Billing', level: 75 },
     ],
+    items: [],
   },
   {
-    category: 'Firebase',
+    category: 'Firebase & 백엔드',
     icon: '🔥',
-    items: [
-      'Firestore', 'Realtime Database', 'Storage', 'Crashlytics',
-      'FCM', 'Authentication', 'App Distribution', 'Test Lab',
+    keyItems: [
+      { name: 'FCM', level: 85 },
+      { name: 'Crashlytics', level: 85 },
+      { name: 'App Distribution', level: 80 },
+      { name: 'Node.js / Express', level: 65 },
+      { name: 'MySQL / SQLite', level: 65 },
     ],
+    items: [],
   },
   {
     category: 'CI/CD & DevOps',
     icon: '⚙️',
-    items: ['GitLab CI/CD', 'Jenkins', 'Firebase App Distribution', 'Firebase Test Lab', 'JUnit', 'MockK', 'Claude Code CLI'],
+    keyItems: [
+      { name: 'GitLab CI/CD', level: 85 },
+      { name: 'Jenkins', level: 80 },
+      { name: 'Claude Code CLI', level: 85 },
+      { name: 'JUnit / MockK', level: 70 },
+      { name: 'Firebase App Distribution', level: 80 },
+    ],
+    items: [],
+  },
+];
+
+export const devEnvironment: DevTool[] = [
+  // 개발 도구
+  {
+    name: 'Android Studio',
+    group: '개발 도구',
+    color: '#3DDC84',
+    logo: require('../../assets/tool-logos/android-studio.png'),
+    description: 'Android 앱 개발 주력 IDE · 에뮬레이터, Profiler 적극 활용',
   },
   {
-    category: '백엔드',
-    icon: '🖥️',
-    items: ['Spring Boot', 'Spring Data JPA', 'Spring WebFlux', 'Node.js', 'SQLite', 'MySQL'],
+    name: 'Postman',
+    group: '개발 도구',
+    color: '#FF6C37',
+    logo: require('../../assets/tool-logos/postman.png'),
+    description: 'REST API 테스트 및 명세 공유',
+  },
+  // 버전 관리 & CI/CD
+  {
+    name: 'GitLab',
+    group: '버전 관리 & CI/CD',
+    color: '#FC6D26',
+    logo: require('../../assets/tool-logos/gitlab.png'),
+    description: 'MR 기반 코드 리뷰, GitLab CI/CD 파이프라인 구성 및 운영',
   },
   {
-    category: '협업 도구',
-    icon: '🤝',
-    items: ['Jira', 'Slack', 'Figma', 'Zeplin', 'Notion', 'GitHub', 'GitLab'],
+    name: 'GitHub',
+    group: '버전 관리 & CI/CD',
+    color: '#181717',
+    logo: require('../../assets/tool-logos/github.png'),
+    description: '오픈소스 기여 및 개인 프로젝트 버전 관리',
+  },
+  {
+    name: 'Jenkins',
+    group: '버전 관리 & CI/CD',
+    color: '#D33833',
+    logo: require('../../assets/tool-logos/jenkins.png'),
+    description: '자동 빌드 및 APK 배포 파이프라인 구성, Slack 연동 알림',
+  },
+  // 디자인
+  {
+    name: 'Figma',
+    group: '디자인',
+    color: '#A259FF',
+    logo: require('../../assets/tool-logos/figma.png'),
+    description: '디자인 스펙 확인, 컴포넌트 단위 UI 구현 및 디자이너 협업',
+  },
+  {
+    name: 'Zeplin',
+    group: '디자인',
+    color: '#FDBD39',
+    logo: require('../../assets/tool-logos/zeplin.png'),
+    description: '디자인 스펙 확인 및 에셋 추출, Figma 연동 협업',
+  },
+  // 협업 & 커뮤니케이션
+  {
+    name: 'Jira',
+    group: '협업 & 커뮤니케이션',
+    color: '#0052CC',
+    logo: require('../../assets/tool-logos/jira.jpg'),
+    description: '스프린트 계획, 이슈 트래킹, 에픽·스토리·서브태스크 관리',
+  },
+  {
+    name: 'Slack',
+    group: '협업 & 커뮤니케이션',
+    color: '#4A154B',
+    logo: require('../../assets/tool-logos/slack.png'),
+    description: 'CI/CD 빌드 알림, 크래시 리포트 자동화, 팀 실시간 소통',
+  },
+  {
+    name: 'Notion',
+    group: '협업 & 커뮤니케이션',
+    color: '#37352F',
+    logo: require('../../assets/tool-logos/notion.png'),
+    description: '기술 문서 작성, API 명세, 회의록 및 스프린트 회고 관리',
   },
 ];
 

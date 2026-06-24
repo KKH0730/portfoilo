@@ -1,67 +1,124 @@
 import React from 'react';
-import { View, Text, StyleSheet, LayoutChangeEvent } from 'react-native';
+import { View, Text, Image, StyleSheet, LayoutChangeEvent } from 'react-native';
 import { featuredProjects, additionalProjects, FeaturedProject, AdditionalProject } from '../data/portfolio';
 import C from '../theme/colors';
 
-interface FeaturedCardProps {
-  project: FeaturedProject;
-}
+// ─── Featured Card ──────────────────────────────────────────────────────────
 
-function FeaturedCard({ project }: FeaturedCardProps) {
+function FeaturedCard({ project }: { project: FeaturedProject }) {
+  const color = project.categoryColor;
   return (
     <View style={styles.featuredCard}>
-      <View style={styles.featuredTop}>
-        <View style={[styles.categoryBadge, { backgroundColor: project.categoryColor + '15' }]}>
-          <Text style={[styles.categoryBadgeText, { color: project.categoryColor }]}>
-            {project.category}
-          </Text>
-        </View>
-        <View style={styles.featuredMeta}>
-          <Text style={styles.featuredCompany}>{project.company}</Text>
-          <Text style={styles.featuredPeriod}>{project.period}</Text>
-        </View>
-      </View>
+      {/* Accent strip */}
+      <View style={[styles.featuredAccent, { backgroundColor: color }]} />
 
-      <Text style={styles.featuredTitle}>{project.title}</Text>
-      <Text style={styles.featuredDesc}>{project.description}</Text>
-
-      <View style={styles.highlightList}>
-        {project.highlights.map((h, i) => (
-          <View key={i} style={styles.highlightItem}>
-            <Text style={styles.highlightIcon}>{h.icon}</Text>
-            <Text style={styles.highlightText}>{h.text}</Text>
+      <View style={styles.featuredBody}>
+        {/* Header row */}
+        <View style={styles.featuredHead}>
+          <View style={styles.featuredHeadLeft}>
+            {project.logo && (
+              <View style={[styles.projectLogoWrap, { backgroundColor: color + '12' }]}>
+                <Image source={project.logo} style={styles.projectLogo} resizeMode="contain" />
+              </View>
+            )}
+            <View style={styles.featuredHeadMeta}>
+              <View style={[styles.categoryBadge, { backgroundColor: color + '15' }]}>
+                <Text style={[styles.categoryBadgeText, { color }]}>{project.category}</Text>
+              </View>
+              <Text style={styles.featuredTitle}>{project.title}</Text>
+              <Text style={styles.featuredCompanyPeriod}>
+                {project.company} · {project.period}
+              </Text>
+            </View>
           </View>
-        ))}
-      </View>
+        </View>
 
-      <View style={styles.divider} />
+        <Text style={styles.featuredDesc}>{project.description}</Text>
 
-      <View style={styles.stackRow}>
-        {project.stack.map((s, i) => (
-          <View key={i} style={[styles.stackTag, { backgroundColor: project.categoryColor + '10' }]}>
-            <Text style={[styles.stackTagText, { color: project.categoryColor }]}>{s}</Text>
+        {/* Two-column: features + achievements */}
+        <View style={styles.infoRow}>
+          {/* 핵심기능 */}
+          <View style={styles.infoCol}>
+            <Text style={[styles.infoSectionTitle, { color }]}>핵심기능</Text>
+            <View style={styles.featureList}>
+              {project.features.map((f, i) => (
+                <View key={i} style={styles.featureItem}>
+                  <View style={[styles.featureDot, { backgroundColor: color }]} />
+                  <Text style={styles.featureText}>{f}</Text>
+                </View>
+              ))}
+            </View>
           </View>
-        ))}
+
+          <View style={[styles.colDivider, { backgroundColor: color + '20' }]} />
+
+          {/* 주요 성과 */}
+          <View style={styles.infoCol}>
+            <Text style={[styles.infoSectionTitle, { color }]}>주요 성과</Text>
+            <View style={styles.achievementList}>
+              {project.highlights.map((h, i) => (
+                <View key={i} style={styles.achievementItem}>
+                  <Text style={styles.achievementIcon}>{h.icon}</Text>
+                  <Text style={styles.achievementText}>{h.text}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+        </View>
+
+        {/* 기술스택 */}
+        <View style={styles.stackSection}>
+          <View style={styles.stackRow}>
+            {project.stack.map((s, i) => (
+              <View key={i} style={[styles.stackTag, { backgroundColor: color + '10' }]}>
+                <Text style={[styles.stackTagText, { color }]}>{s}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
       </View>
     </View>
   );
 }
 
-interface AdditionalCardProps {
-  project: AdditionalProject;
-}
+// ─── Additional Card ─────────────────────────────────────────────────────────
 
-function AdditionalCard({ project }: AdditionalCardProps) {
+function AdditionalCard({ project }: { project: AdditionalProject }) {
   return (
     <View style={styles.additionalCard}>
       <View style={styles.additionalTop}>
-        <View style={[styles.typeBadge, { backgroundColor: project.typeColor + '12' }]}>
-          <Text style={[styles.typeBadgeText, { color: project.typeColor }]}>{project.type}</Text>
+        <View style={styles.additionalTopLeft}>
+          {project.logo ? (
+            <View
+              style={[styles.additionalLogoWrap, { backgroundColor: project.typeColor + '12' }]}
+            >
+              <Image source={project.logo} style={styles.additionalLogo} resizeMode="contain" />
+            </View>
+          ) : (
+            <View
+              style={[
+                styles.additionalLogoWrap,
+                styles.additionalLogoPlaceholder,
+                { backgroundColor: project.typeColor + '12' },
+              ]}
+            >
+              <Text style={[styles.additionalLogoEmoji, { color: project.typeColor }]}>
+                {project.type === 'AI 도구' ? '🤖' : '📱'}
+              </Text>
+            </View>
+          )}
+          <View style={styles.additionalTopMeta}>
+            <View style={[styles.typeBadge, { backgroundColor: project.typeColor + '12' }]}>
+              <Text style={[styles.typeBadgeText, { color: project.typeColor }]}>
+                {project.type}
+              </Text>
+            </View>
+            <Text style={styles.additionalTitle}>{project.title}</Text>
+          </View>
         </View>
         <Text style={styles.additionalPeriod}>{project.period}</Text>
       </View>
 
-      <Text style={styles.additionalTitle}>{project.title}</Text>
       <Text style={styles.additionalDesc}>{project.description}</Text>
 
       <View style={[styles.highlightPill, { backgroundColor: project.typeColor + '10' }]}>
@@ -86,6 +143,8 @@ function AdditionalCard({ project }: AdditionalCardProps) {
   );
 }
 
+// ─── Projects Section ────────────────────────────────────────────────────────
+
 interface ProjectsProps {
   onLayout: (e: LayoutChangeEvent) => void;
 }
@@ -107,19 +166,33 @@ export default function Projects({ onLayout }: ProjectsProps) {
         </View>
 
         <View style={styles.moreHeader}>
-          <Text style={styles.moreTitle}>추가 프로젝트</Text>
+          <Text style={styles.moreTitle}>그외 프로젝트</Text>
           <View style={styles.moreDivider} />
         </View>
 
-        <View style={styles.additionalGrid}>
-          {additionalProjects.map((project, i) => (
-            <AdditionalCard key={i} project={project} />
-          ))}
-        </View>
+        {(['개인 프로젝트', '사이드 프로젝트', 'AI툴'] as const).map((cat) => {
+          const group = additionalProjects.filter((p) => p.category === cat);
+          if (!group.length) return null;
+          return (
+            <View key={cat} style={styles.categorySection}>
+              <View style={styles.categoryHeader}>
+                <Text style={styles.categoryTitle}>{cat}</Text>
+                <View style={styles.categoryDivider} />
+              </View>
+              <View style={styles.additionalGrid}>
+                {group.map((project, i) => (
+                  <AdditionalCard key={i} project={project} />
+                ))}
+              </View>
+            </View>
+          );
+        })}
       </View>
     </View>
   );
 }
+
+// ─── Styles ──────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
   section: {
@@ -154,88 +227,165 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: C.textSub,
   },
+
+  // Featured grid
   featuredGrid: {
-    gap: 24,
-    marginBottom: 60,
+    gap: 28,
+    marginBottom: 64,
   },
   featuredCard: {
     backgroundColor: C.white,
-    borderRadius: 20,
-    padding: 32,
+    borderRadius: 22,
     borderWidth: 1,
     borderColor: C.border,
-    shadowColor: C.shadow,
-    shadowOpacity: 1,
-    shadowRadius: 16,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 2,
-  },
-  featuredTop: {
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOpacity: 0.07,
+    shadowRadius: 20,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 3,
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
+  },
+  featuredAccent: {
+    width: 5,
+    flexShrink: 0,
+  },
+  featuredBody: {
+    flex: 1,
+    padding: 28,
+  },
+
+  // Card header
+  featuredHead: {
     marginBottom: 16,
-    flexWrap: 'wrap',
-    gap: 10,
+  },
+  featuredHeadLeft: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 16,
+  },
+  projectLogoWrap: {
+    width: 64,
+    height: 64,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+    flexShrink: 0,
+  },
+  projectLogo: {
+    width: 56,
+    height: 56,
+  },
+  featuredHeadMeta: {
+    flex: 1,
+    gap: 6,
   },
   categoryBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 5,
-    borderRadius: 8,
+    alignSelf: 'flex-start',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 7,
   },
   categoryBadgeText: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '700',
   },
-  featuredMeta: {
-    alignItems: 'flex-end',
-  },
-  featuredCompany: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: C.textSub,
-  },
-  featuredPeriod: {
-    fontSize: 12,
-    color: C.textMuted,
-  },
   featuredTitle: {
-    fontSize: 26,
+    fontSize: 24,
     fontWeight: '800',
     color: C.text,
     letterSpacing: -0.5,
-    marginBottom: 12,
+  },
+  featuredCompanyPeriod: {
+    fontSize: 13,
+    color: C.textMuted,
+    fontWeight: '500',
   },
   featuredDesc: {
-    fontSize: 15,
+    fontSize: 14,
     color: C.textSub,
-    lineHeight: 26,
+    lineHeight: 24,
     marginBottom: 24,
   },
-  highlightList: {
-    gap: 10,
-    marginBottom: 24,
-  },
-  highlightItem: {
+
+  // Two-column info
+  infoRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
+    gap: 0,
+    marginBottom: 24,
+    borderWidth: 1,
+    borderColor: C.borderLight,
+    borderRadius: 14,
+    overflow: 'hidden',
   },
-  highlightIcon: {
-    fontSize: 18,
-    width: 24,
-    textAlign: 'center',
-  },
-  highlightText: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: C.text,
+  infoCol: {
     flex: 1,
+    padding: 18,
   },
-  divider: {
-    height: 1,
-    backgroundColor: C.borderLight,
-    marginBottom: 20,
+  colDivider: {
+    width: 1,
+  },
+  infoSectionTitle: {
+    fontSize: 12,
+    fontWeight: '800',
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
+    marginBottom: 12,
+  },
+
+  // Features
+  featureList: {
+    gap: 8,
+  },
+  featureItem: {
+    flexDirection: 'row',
+    gap: 8,
+    alignItems: 'flex-start',
+  },
+  featureDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    marginTop: 5,
+    flexShrink: 0,
+  },
+  featureText: {
+    fontSize: 13,
+    color: C.text,
+    lineHeight: 20,
+    flex: 1,
+    fontWeight: '500',
+  },
+
+  // Achievements
+  achievementList: {
+    gap: 8,
+  },
+  achievementItem: {
+    flexDirection: 'row',
+    gap: 8,
+    alignItems: 'flex-start',
+  },
+  achievementIcon: {
+    fontSize: 14,
+    width: 20,
+    textAlign: 'center',
+    flexShrink: 0,
+  },
+  achievementText: {
+    fontSize: 13,
+    color: C.text,
+    lineHeight: 20,
+    flex: 1,
+    fontWeight: '500',
+  },
+
+  // Stack tags
+  stackSection: {
+    borderTopWidth: 1,
+    borderTopColor: C.borderLight,
+    paddingTop: 18,
   },
   stackRow: {
     flexDirection: 'row',
@@ -251,6 +401,8 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '600',
   },
+
+  // More header
   moreHeader: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -261,13 +413,37 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '700',
     color: C.text,
-    whiteSpace: 'nowrap',
+    ...({ whiteSpace: 'nowrap' } as any),
   },
   moreDivider: {
     flex: 1,
     height: 1,
     backgroundColor: C.border,
   },
+
+  // Category
+  categorySection: {
+    marginBottom: 40,
+  },
+  categoryHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 20,
+  },
+  categoryTitle: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: C.textSub,
+    ...({ whiteSpace: 'nowrap' } as any),
+  },
+  categoryDivider: {
+    flex: 1,
+    height: 1,
+    backgroundColor: C.borderLight,
+  },
+
+  // Additional grid
   additionalGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -276,14 +452,13 @@ const styles = StyleSheet.create({
   additionalCard: {
     flex: 1,
     minWidth: 280,
-    maxWidth: 360,
     backgroundColor: C.white,
     borderRadius: 16,
-    padding: 24,
+    padding: 22,
     borderWidth: 1,
     borderColor: C.border,
-    shadowColor: C.shadow,
-    shadowOpacity: 0.8,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 2 },
     elevation: 1,
@@ -291,35 +466,63 @@ const styles = StyleSheet.create({
   additionalTop: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     marginBottom: 12,
+    gap: 8,
+  },
+  additionalTopLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    flex: 1,
+  },
+  additionalLogoWrap: {
+    width: 40,
+    height: 40,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+    flexShrink: 0,
+  },
+  additionalLogoPlaceholder: {},
+  additionalLogoEmoji: {
+    fontSize: 20,
+  },
+  additionalLogo: {
+    width: 34,
+    height: 34,
+  },
+  additionalTopMeta: {
+    flex: 1,
+    gap: 4,
   },
   typeBadge: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
+    alignSelf: 'flex-start',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
     borderRadius: 6,
   },
   typeBadgeText: {
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: '700',
+  },
+  additionalTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: C.text,
+    letterSpacing: -0.3,
   },
   additionalPeriod: {
     fontSize: 11,
     color: C.textMuted,
-  },
-  additionalTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: C.text,
-    marginBottom: 8,
-    letterSpacing: -0.3,
+    flexShrink: 0,
   },
   additionalDesc: {
     fontSize: 13,
     color: C.textSub,
     lineHeight: 21,
-    marginBottom: 14,
-    flex: 1,
+    marginBottom: 12,
   },
   highlightPill: {
     alignSelf: 'flex-start',

@@ -1,5 +1,5 @@
 import React, { useRef, useState, useCallback } from 'react';
-import { View, ScrollView, StyleSheet, Platform, LayoutChangeEvent } from 'react-native';
+import { View, ScrollView, Animated, StyleSheet, Platform, LayoutChangeEvent } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import Navbar from './src/components/Navbar';
 import Hero from './src/components/Hero';
@@ -14,6 +14,7 @@ const NAV_HEIGHT = 64;
 
 export default function App() {
   const scrollRef = useRef<ScrollView>(null);
+  const scrollY = useRef(new Animated.Value(0)).current;
   const [sectionOffsets, setSectionOffsets] = useState<Record<string, number>>({});
 
   const registerSection = useCallback((name: string, e: LayoutChangeEvent) => {
@@ -40,10 +41,19 @@ export default function App() {
         style={styles.scroll}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.content}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: false }
+        )}
+        scrollEventThrottle={16}
       >
         <Hero onLayout={(e) => registerSection('hero', e)} />
         <About onLayout={(e) => registerSection('about', e)} />
-        <Career onLayout={(e) => registerSection('career', e)} />
+        <Career
+          onLayout={(e) => registerSection('career', e)}
+          scrollY={scrollY}
+          sectionY={sectionOffsets['career'] ?? 0}
+        />
         <Projects onLayout={(e) => registerSection('projects', e)} />
         <Skills onLayout={(e) => registerSection('skills', e)} />
         <Contact onLayout={(e) => registerSection('contact', e)} />

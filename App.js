@@ -1,20 +1,66 @@
+import React, { useRef, useState, useCallback } from 'react';
+import { View, ScrollView, StyleSheet, Platform } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import Navbar from './src/components/Navbar';
+import Hero from './src/components/Hero';
+import About from './src/components/About';
+import Career from './src/components/Career';
+import Projects from './src/components/Projects';
+import Skills from './src/components/Skills';
+import Contact from './src/components/Contact';
+import C from './src/theme/colors';
+
+const NAV_HEIGHT = 64;
 
 export default function App() {
+  const scrollRef = useRef(null);
+  const [sectionOffsets, setSectionOffsets] = useState({});
+
+  const registerSection = useCallback((name, e) => {
+    const y = e?.nativeEvent?.layout?.y ?? 0;
+    setSectionOffsets((prev) => ({ ...prev, [name]: y }));
+  }, []);
+
+  const scrollToSection = useCallback(
+    (name) => {
+      const y = sectionOffsets[name];
+      if (y !== undefined && scrollRef.current) {
+        scrollRef.current.scrollTo({ y: Math.max(0, y - NAV_HEIGHT + 1), animated: true });
+      }
+    },
+    [sectionOffsets]
+  );
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
+    <View style={styles.root}>
+      <StatusBar style="dark" />
+      <Navbar onNavigate={scrollToSection} />
+      <ScrollView
+        ref={scrollRef}
+        style={styles.scroll}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.content}
+      >
+        <Hero onLayout={(e) => registerSection('hero', e)} />
+        <About onLayout={(e) => registerSection('about', e)} />
+        <Career onLayout={(e) => registerSection('career', e)} />
+        <Projects onLayout={(e) => registerSection('projects', e)} />
+        <Skills onLayout={(e) => registerSection('skills', e)} />
+        <Contact onLayout={(e) => registerSection('contact', e)} />
+      </ScrollView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  root: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: C.bg,
+  },
+  scroll: {
+    flex: 1,
+  },
+  content: {
+    paddingTop: Platform.OS === 'web' ? NAV_HEIGHT : 0,
   },
 });

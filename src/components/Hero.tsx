@@ -1,10 +1,14 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Linking } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Linking, LayoutChangeEvent } from 'react-native';
 import { personal } from '../data/portfolio';
 import C from '../theme/colors';
 
-export default function Hero({ onLayout }) {
-  const openLink = (url) => Linking.openURL(url);
+interface HeroProps {
+  onLayout: (e: LayoutChangeEvent) => void;
+}
+
+export default function Hero({ onLayout }: HeroProps) {
+  const openLink = (url: string) => Linking.openURL(url);
 
   return (
     <View style={styles.section} onLayout={onLayout} nativeID="hero">
@@ -177,5 +181,4 @@ const styles = StyleSheet.create({
     color: C.textMuted,
     fontSize: 13,
   },
-
 });

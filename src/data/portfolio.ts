@@ -1,4 +1,80 @@
-export const personal = {
+export interface PersonalInfo {
+  name: string;
+  nameEn: string;
+  role: string;
+  experience: string;
+  email: string;
+  phone: string;
+  github: string;
+  blog: string;
+  headline: string;
+  about: string[];
+}
+
+export interface Stat {
+  value: string;
+  label: string;
+}
+
+export interface CareerProject {
+  title: string;
+  period: string;
+  summary: string;
+  tasks: string[];
+  results: string[];
+  stack: string[];
+}
+
+export interface CareerCompany {
+  id: number;
+  company: string;
+  period: string;
+  role: string;
+  color: string;
+  projects: CareerProject[];
+}
+
+export interface Highlight {
+  icon: string;
+  text: string;
+}
+
+export interface FeaturedProject {
+  id: number;
+  title: string;
+  company: string;
+  period: string;
+  category: string;
+  categoryColor: string;
+  description: string;
+  highlights: Highlight[];
+  stack: string[];
+}
+
+export interface AdditionalProject {
+  title: string;
+  period: string;
+  type: string;
+  typeColor: string;
+  description: string;
+  stack: string[];
+  highlight: string;
+}
+
+export interface SkillCategory {
+  category: string;
+  icon: string;
+  items: string[];
+}
+
+export interface AiTool {
+  tool: string;
+  role: string;
+  color: string;
+  usages: string[];
+}
+
+export const personal: PersonalInfo = {
   name: '김경호',
   nameEn: 'Kyungho Kim',
   role: 'Android Developer',
@@ -15,13 +91,13 @@ export const personal = {
   ],
 };
 
-export const stats = [
+export const stats: Stat[] = [
   { value: '5년+', label: '개발 경력' },
   { value: '9개', label: '앱 서비스 경험' },
   { value: '90%↓', label: '결제 오류 감소' },
 ];
 
-export const career = [
+export const career: CareerCompany[] = [
   {
     id: 1,
     company: '미디어웹',
@@ -221,7 +297,7 @@ export const career = [
   },
 ];
 
-export const featuredProjects = [
+export const featuredProjects: FeaturedProject[] = [
   {
     id: 1,
     title: '피카플레이 / 피카오더',
@@ -229,7 +305,8 @@ export const featuredProjects = [
     period: '2025 ~ 2026',
     category: '회사 프로젝트',
     categoryColor: '#7C6FFF',
-    description: '피카 PC방 서비스의 Android 앱 개발. 7,000+ 매장 도입 주방 앱 단독 개발, 소셜 로그인 계정 통합, AI 기반 CI/CD 자동화, 결제 오류 90% 감소까지 핵심 기능 전반을 담당했습니다.',
+    description:
+      '피카 PC방 서비스의 Android 앱 개발. 7,000+ 매장 도입 주방 앱 단독 개발, 소셜 로그인 계정 통합, AI 기반 CI/CD 자동화, 결제 오류 90% 감소까지 핵심 기능 전반을 담당했습니다.',
     highlights: [
       { icon: '📱', text: '앱 설치 19.3% 증가 (30만 → 35.8만)' },
       { icon: '🏪', text: 'PC방 7,000+ 매장 주방 앱 도입' },
@@ -245,7 +322,8 @@ export const featuredProjects = [
     period: '2022 ~ 2023',
     category: '회사 프로젝트',
     categoryColor: '#22D3B8',
-    description: '영화·방송 추천 서비스 Android 앱 개발 및 유지보수. Java → Kotlin 전환, MVP → Clean Architecture + MVVM 전환, LLM 기반 AI 기능 추가, 트래픽 최적화까지 전반적인 품질 개선을 담당했습니다.',
+    description:
+      '영화·방송 추천 서비스 Android 앱 개발 및 유지보수. Java → Kotlin 전환, MVP → Clean Architecture + MVVM 전환, LLM 기반 AI 기능 추가, 트래픽 최적화까지 전반적인 품질 개선을 담당했습니다.',
     highlights: [
       { icon: '📥', text: '누적 다운로드 10만+' },
       { icon: '🔄', text: 'MVP → Clean Architecture + MVVM 전환' },
@@ -261,7 +339,8 @@ export const featuredProjects = [
     period: '2021 ~ 2022',
     category: '회사 프로젝트',
     categoryColor: '#F97316',
-    description: '반려동물 건강 스마트 관리 앱 전체 개발. 소변검사 키트 카메라 ROI 추출, AI 기반 반려동물 질병 진단, Wi-Fi 내시경 카메라 연동, 중·영·일 3개 국어 지원 기능을 구현했습니다.',
+    description:
+      '반려동물 건강 스마트 관리 앱 전체 개발. 소변검사 키트 카메라 ROI 추출, AI 기반 반려동물 질병 진단, Wi-Fi 내시경 카메라 연동, 중·영·일 3개 국어 지원 기능을 구현했습니다.',
     highlights: [
       { icon: '📥', text: '누적 다운로드 5천+' },
       { icon: '🔬', text: '소변검사 ROI 정확도 15% 향상' },
@@ -272,13 +351,14 @@ export const featuredProjects = [
   },
 ];
 
-export const additionalProjects = [
+export const additionalProjects: AdditionalProject[] = [
   {
     title: 'TradeWave',
     period: '2024.12 ~ 2025.02',
     type: '개인 프로젝트',
     typeColor: '#7C6FFF',
-    description: '암호화폐 시세 확인 및 자동 매매 앱. WebSocket 실시간 시세, 백테스트 기능, Foreground Service 기반 자동 매매 로직 구현.',
+    description:
+      '암호화폐 시세 확인 및 자동 매매 앱. WebSocket 실시간 시세, 백테스트 기능, Foreground Service 기반 자동 매매 로직 구현.',
     stack: ['Kotlin', 'Jetpack Compose', 'Clean Architecture', 'WebSocket', 'Firebase'],
     highlight: '자동 매매 수익률 10%+',
   },
@@ -287,7 +367,8 @@ export const additionalProjects = [
     period: '2024.04 ~ 2024.07',
     type: '사이드 프로젝트',
     typeColor: '#22D3B8',
-    description: '피부 시술 업체 외주 앱. QR 코드 포인트 적립, 포인트 몰, FCM 알림. 5인 팀 협업 (기획·디자인·Android·iOS·백엔드).',
+    description:
+      '피부 시술 업체 외주 앱. QR 코드 포인트 적립, 포인트 몰, FCM 알림. 5인 팀 협업 (기획·디자인·Android·iOS·백엔드).',
     stack: ['Kotlin', 'Clean Architecture', 'Hilt', 'Flow', 'FCM', 'Retrofit2'],
     highlight: '누적 다운로드 5만+',
   },
@@ -305,7 +386,8 @@ export const additionalProjects = [
     period: '2023.01 ~ 2023.02',
     type: '회사 프로젝트',
     typeColor: '#22D3B8',
-    description: '취향 기반 영화·방송 추천 하이브리드 앱. Product Hunt 출품작으로 단기간 글로벌 주목을 받은 프로젝트.',
+    description:
+      '취향 기반 영화·방송 추천 하이브리드 앱. Product Hunt 출품작으로 단기간 글로벌 주목을 받은 프로젝트.',
     stack: ['Kotlin', 'MVP', 'AAC', 'Firebase', 'Jenkins', 'Gitlab'],
     highlight: 'Product Hunt 일별 4위',
   },
@@ -314,7 +396,8 @@ export const additionalProjects = [
     period: '2022.10 ~ 2023.03',
     type: '개인 프로젝트',
     typeColor: '#7C6FFF',
-    description: '두 이미지의 차이점 찾기 퍼즐 게임 앱. OpenCV로 차이점 자동 검출, Jetpack Compose 첫 적용 프로젝트.',
+    description:
+      '두 이미지의 차이점 찾기 퍼즐 게임 앱. OpenCV로 차이점 자동 검출, Jetpack Compose 첫 적용 프로젝트.',
     stack: ['Kotlin', 'Jetpack Compose', 'OpenCV', 'Hilt', 'Firebase', 'Admob'],
     highlight: 'Jetpack Compose 첫 도입',
   },
@@ -323,13 +406,14 @@ export const additionalProjects = [
     period: '2021.02 ~ 2021.03',
     type: '개인 프로젝트',
     typeColor: '#7C6FFF',
-    description: '반려동물 사진·일상 공유 SNS 앱. 커뮤니티, 채팅, 팔로잉·팔로우, FCM 전송 기능 전체를 1인 기획·개발·서버 담당.',
+    description:
+      '반려동물 사진·일상 공유 SNS 앱. 커뮤니티, 채팅, 팔로잉·팔로우, FCM 전송 기능 전체를 1인 기획·개발·서버 담당.',
     stack: ['Kotlin', 'MVVM', 'Firebase', 'Firestore', 'Realtime Database', 'Koin'],
     highlight: '기획·개발·서버 1인 전담',
   },
 ];
 
-export const skills = [
+export const skills: SkillCategory[] = [
   {
     category: '언어',
     icon: '💻',
@@ -348,12 +432,19 @@ export const skills = [
   {
     category: 'Android 라이브러리',
     icon: '🤖',
-    items: ['Coroutine', 'Flow / StateFlow', 'Hilt', 'Room', 'Paging3', 'Retrofit2', 'OkHttp3', 'Glide', 'Lottie', 'Databinding', 'AAC', 'RxJava', 'In-app Billing', 'Admob', 'OpenCV'],
+    items: [
+      'Coroutine', 'Flow / StateFlow', 'Hilt', 'Room', 'Paging3', 'Retrofit2',
+      'OkHttp3', 'Glide', 'Lottie', 'Databinding', 'AAC', 'RxJava',
+      'In-app Billing', 'Admob', 'OpenCV',
+    ],
   },
   {
     category: 'Firebase',
     icon: '🔥',
-    items: ['Firestore', 'Realtime Database', 'Storage', 'Crashlytics', 'FCM', 'Authentication', 'App Distribution', 'Test Lab'],
+    items: [
+      'Firestore', 'Realtime Database', 'Storage', 'Crashlytics',
+      'FCM', 'Authentication', 'App Distribution', 'Test Lab',
+    ],
   },
   {
     category: 'CI/CD & DevOps',
@@ -372,7 +463,7 @@ export const skills = [
   },
 ];
 
-export const aiTools = [
+export const aiTools: AiTool[] = [
   {
     tool: 'Claude Code',
     role: 'Primary',

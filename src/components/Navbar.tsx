@@ -11,7 +11,11 @@ const NAV_LINKS = [
   { label: 'Contact', id: 'contact' },
 ];
 
-export default function Navbar({ onNavigate }) {
+interface NavbarProps {
+  onNavigate: (id: string) => void;
+}
+
+export default function Navbar({ onNavigate }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('');
 
@@ -24,7 +28,7 @@ export default function Navbar({ onNavigate }) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleNav = (id) => {
+  const handleNav = (id: string) => {
     setActiveSection(id);
     if (onNavigate) onNavigate(id);
   };

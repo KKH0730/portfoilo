@@ -1,9 +1,15 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, LayoutChangeEvent } from 'react-native';
 import { stats } from '../data/portfolio';
 import C from '../theme/colors';
 
-const pillars = [
+interface Pillar {
+  icon: string;
+  title: string;
+  desc: string;
+}
+
+const pillars: Pillar[] = [
   {
     icon: '📱',
     title: 'Android 개발',
@@ -36,7 +42,11 @@ const pillars = [
   },
 ];
 
-export default function About({ onLayout }) {
+interface AboutProps {
+  onLayout: (e: LayoutChangeEvent) => void;
+}
+
+export default function About({ onLayout }: AboutProps) {
   return (
     <View style={styles.section} onLayout={onLayout} nativeID="about">
       <View style={styles.inner}>

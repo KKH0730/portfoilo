@@ -1,5 +1,5 @@
 import React, { useRef, useState, useCallback } from 'react';
-import { View, ScrollView, StyleSheet, Platform } from 'react-native';
+import { View, ScrollView, StyleSheet, Platform, LayoutChangeEvent } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import Navbar from './src/components/Navbar';
 import Hero from './src/components/Hero';
@@ -13,16 +13,16 @@ import C from './src/theme/colors';
 const NAV_HEIGHT = 64;
 
 export default function App() {
-  const scrollRef = useRef(null);
-  const [sectionOffsets, setSectionOffsets] = useState({});
+  const scrollRef = useRef<ScrollView>(null);
+  const [sectionOffsets, setSectionOffsets] = useState<Record<string, number>>({});
 
-  const registerSection = useCallback((name, e) => {
+  const registerSection = useCallback((name: string, e: LayoutChangeEvent) => {
     const y = e?.nativeEvent?.layout?.y ?? 0;
     setSectionOffsets((prev) => ({ ...prev, [name]: y }));
   }, []);
 
   const scrollToSection = useCallback(
-    (name) => {
+    (name: string) => {
       const y = sectionOffsets[name];
       if (y !== undefined && scrollRef.current) {
         scrollRef.current.scrollTo({ y: Math.max(0, y - NAV_HEIGHT + 1), animated: true });

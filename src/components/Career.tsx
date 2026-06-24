@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { career } from '../data/portfolio';
+import { View, Text, TouchableOpacity, StyleSheet, LayoutChangeEvent } from 'react-native';
+import { career, CareerProject } from '../data/portfolio';
 import C from '../theme/colors';
 
-function ProjectCard({ project, accentColor }) {
+interface ProjectCardProps {
+  project: CareerProject;
+  accentColor: string;
+}
+
+function ProjectCard({ project, accentColor }: ProjectCardProps) {
   const [expanded, setExpanded] = useState(false);
 
   return (
@@ -56,7 +61,11 @@ function ProjectCard({ project, accentColor }) {
   );
 }
 
-export default function Career({ onLayout }) {
+interface CareerProps {
+  onLayout: (e: LayoutChangeEvent) => void;
+}
+
+export default function Career({ onLayout }: CareerProps) {
   return (
     <View style={styles.section} onLayout={onLayout} nativeID="career">
       <View style={styles.inner}>

@@ -1,9 +1,15 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, LayoutChangeEvent } from 'react-native';
 import { skills, aiTools } from '../data/portfolio';
 import C from '../theme/colors';
 
-function SkillCategory({ category, icon, items }) {
+interface SkillCategoryProps {
+  category: string;
+  icon: string;
+  items: string[];
+}
+
+function SkillCategory({ category, icon, items }: SkillCategoryProps) {
   return (
     <View style={styles.categoryCard}>
       <View style={styles.categoryHeader}>
@@ -21,7 +27,11 @@ function SkillCategory({ category, icon, items }) {
   );
 }
 
-export default function Skills({ onLayout }) {
+interface SkillsProps {
+  onLayout: (e: LayoutChangeEvent) => void;
+}
+
+export default function Skills({ onLayout }: SkillsProps) {
   return (
     <View style={styles.section} onLayout={onLayout} nativeID="skills">
       <View style={styles.inner}>

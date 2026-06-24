@@ -18,6 +18,7 @@ const C = {
   borderLight: '#ECEEF8',
   white: '#FFFFFF',
   shadow: 'rgba(79, 70, 229, 0.08)',
-};
+} as const;
 
+export type Colors = typeof C;
 export default C;

@@ -1,9 +1,17 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Linking } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Linking, LayoutChangeEvent } from 'react-native';
 import { personal } from '../data/portfolio';
 import C from '../theme/colors';
 
-const contactItems = [
+interface ContactItem {
+  icon: string;
+  label: string;
+  value: string;
+  url: string;
+  color: string;
+}
+
+const contactItems: ContactItem[] = [
   {
     icon: '📧',
     label: '이메일',
@@ -34,8 +42,12 @@ const contactItems = [
   },
 ];
 
-export default function Contact({ onLayout }) {
-  const openLink = (url) => Linking.openURL(url);
+interface ContactProps {
+  onLayout: (e: LayoutChangeEvent) => void;
+}
+
+export default function Contact({ onLayout }: ContactProps) {
+  const openLink = (url: string) => Linking.openURL(url);
 
   return (
     <View style={styles.section} onLayout={onLayout} nativeID="contact">

@@ -1,9 +1,13 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { featuredProjects, additionalProjects } from '../data/portfolio';
+import { View, Text, StyleSheet, LayoutChangeEvent } from 'react-native';
+import { featuredProjects, additionalProjects, FeaturedProject, AdditionalProject } from '../data/portfolio';
 import C from '../theme/colors';
 
-function FeaturedCard({ project }) {
+interface FeaturedCardProps {
+  project: FeaturedProject;
+}
+
+function FeaturedCard({ project }: FeaturedCardProps) {
   return (
     <View style={styles.featuredCard}>
       <View style={styles.featuredTop}>
@@ -43,7 +47,11 @@ function FeaturedCard({ project }) {
   );
 }
 
-function AdditionalCard({ project }) {
+interface AdditionalCardProps {
+  project: AdditionalProject;
+}
+
+function AdditionalCard({ project }: AdditionalCardProps) {
   return (
     <View style={styles.additionalCard}>
       <View style={styles.additionalTop}>
@@ -78,7 +86,11 @@ function AdditionalCard({ project }) {
   );
 }
 
-export default function Projects({ onLayout }) {
+interface ProjectsProps {
+  onLayout: (e: LayoutChangeEvent) => void;
+}
+
+export default function Projects({ onLayout }: ProjectsProps) {
   return (
     <View style={styles.section} onLayout={onLayout} nativeID="projects">
       <View style={styles.inner}>

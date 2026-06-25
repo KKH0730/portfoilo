@@ -3,6 +3,116 @@ import { View, Text, Image, StyleSheet, LayoutChangeEvent } from 'react-native';
 import { featuredProjects, additionalProjects, FeaturedProject, AdditionalProject } from '../data/portfolio';
 import C from '../theme/colors';
 
+// ─── Phone Mockup ─────────────────────────────────────────────────────────────
+
+const PHONE_W = 112;
+const PHONE_H = 232;
+const PHONE_RADIUS = 22;
+const SCREEN_RADIUS = 18;
+const BEZEL = 7;
+
+function PhoneMockup({ source, style }: { source: any; style?: any }) {
+  return (
+    <View style={[phoneSt.phone, style]}>
+      {/* Side button */}
+      <View style={phoneSt.sideBtn} />
+      {/* Volume buttons */}
+      <View style={[phoneSt.volBtn, { top: 56 }]} />
+      <View style={[phoneSt.volBtn, { top: 80 }]} />
+      {/* Screen */}
+      <View style={phoneSt.screen}>
+        <Image source={source} style={phoneSt.screenImg} resizeMode="cover" />
+        {/* Dynamic island */}
+        <View style={phoneSt.dynamicIsland} />
+      </View>
+    </View>
+  );
+}
+
+const phoneSt = StyleSheet.create({
+  phone: {
+    width: PHONE_W,
+    height: PHONE_H,
+    borderRadius: PHONE_RADIUS,
+    backgroundColor: '#18181b',
+    borderWidth: 2,
+    borderColor: '#3f3f46',
+    overflow: 'visible',
+    shadowColor: '#000',
+    shadowOpacity: 0.45,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 8 },
+  },
+  sideBtn: {
+    position: 'absolute',
+    right: -3.5,
+    top: 68,
+    width: 3,
+    height: 48,
+    borderRadius: 2,
+    backgroundColor: '#3f3f46',
+  },
+  volBtn: {
+    position: 'absolute',
+    left: -3.5,
+    width: 3,
+    height: 26,
+    borderRadius: 2,
+    backgroundColor: '#3f3f46',
+  },
+  screen: {
+    position: 'absolute',
+    top: BEZEL,
+    left: BEZEL,
+    right: BEZEL,
+    bottom: BEZEL,
+    borderRadius: SCREEN_RADIUS,
+    backgroundColor: '#000',
+    overflow: 'hidden',
+  },
+  screenImg: {
+    width: '100%',
+    height: '100%',
+  },
+  dynamicIsland: {
+    position: 'absolute',
+    top: 7,
+    alignSelf: 'center',
+    width: 36,
+    height: 10,
+    borderRadius: 6,
+    backgroundColor: '#18181b',
+    zIndex: 2,
+  },
+});
+
+// ─── Phone Gallery (3 staggered phones) ──────────────────────────────────────
+
+function PhoneGallery({ screenshots, color }: { screenshots: any[]; color: string }) {
+  if (!screenshots || screenshots.length < 3) return null;
+  return (
+    <View style={galSt.wrap}>
+      {/* Background glow */}
+      <View style={[galSt.glow, { backgroundColor: color + '18' }]} />
+      {/* Left phone */}
+      <PhoneMockup
+        source={screenshots[1]}
+        style={[galSt.phoneLeft, { transform: [{ rotate: '-8deg' }, { translateY: 20 }] }]}
+      />
+      {/* Center phone (front) */}
+      <PhoneMockup
+        source={screenshots[0]}
+        style={[galSt.phoneCenter]}
+      />
+      {/* Right phone */}
+      <PhoneMockup
+        source={screenshots[2]}
+        style={[galSt.phoneRight, { transform: [{ rotate: '8deg' }, { translateY: 20 }] }]}
+      />
+    </View>
+  );
+}
+
 // ─── Featured Card ──────────────────────────────────────────────────────────
 
 function FeaturedCard({ project }: { project: FeaturedProject }) {
@@ -12,70 +122,80 @@ function FeaturedCard({ project }: { project: FeaturedProject }) {
       {/* Accent strip */}
       <View style={[styles.featuredAccent, { backgroundColor: color }]} />
 
-      <View style={styles.featuredBody}>
-        {/* Header row */}
-        <View style={styles.featuredHead}>
-          <View style={styles.featuredHeadLeft}>
-            {project.logo && (
-              <View style={[styles.projectLogoWrap, { backgroundColor: color + '12' }]}>
-                <Image source={project.logo} style={styles.projectLogo} resizeMode="contain" />
+      {/* Content row: info + phone gallery */}
+      <View style={styles.featuredRow}>
+        <View style={styles.featuredBody}>
+          {/* Header row */}
+          <View style={styles.featuredHead}>
+            <View style={styles.featuredHeadLeft}>
+              {project.logo && (
+                <View style={[styles.projectLogoWrap, { backgroundColor: color + '12' }]}>
+                  <Image source={project.logo} style={styles.projectLogo} resizeMode="contain" />
+                </View>
+              )}
+              <View style={styles.featuredHeadMeta}>
+                <View style={[styles.categoryBadge, { backgroundColor: color + '15' }]}>
+                  <Text style={[styles.categoryBadgeText, { color }]}>{project.category}</Text>
+                </View>
+                <Text style={styles.featuredTitle}>{project.title}</Text>
+                <Text style={styles.featuredCompanyPeriod}>
+                  {project.company} · {project.period}
+                </Text>
               </View>
-            )}
-            <View style={styles.featuredHeadMeta}>
-              <View style={[styles.categoryBadge, { backgroundColor: color + '15' }]}>
-                <Text style={[styles.categoryBadgeText, { color }]}>{project.category}</Text>
-              </View>
-              <Text style={styles.featuredTitle}>{project.title}</Text>
-              <Text style={styles.featuredCompanyPeriod}>
-                {project.company} · {project.period}
-              </Text>
             </View>
           </View>
-        </View>
 
-        <Text style={styles.featuredDesc}>{project.description}</Text>
+          <Text style={styles.featuredDesc}>{project.description}</Text>
 
-        {/* Two-column: features + achievements */}
-        <View style={styles.infoRow}>
-          {/* 핵심기능 */}
-          <View style={styles.infoCol}>
-            <Text style={[styles.infoSectionTitle, { color }]}>핵심기능</Text>
-            <View style={styles.featureList}>
-              {project.features.map((f, i) => (
-                <View key={i} style={styles.featureItem}>
-                  <View style={[styles.featureDot, { backgroundColor: color }]} />
-                  <Text style={styles.featureText}>{f}</Text>
+          {/* Two-column: features + achievements */}
+          <View style={styles.infoRow}>
+            {/* 핵심기능 */}
+            <View style={styles.infoCol}>
+              <Text style={[styles.infoSectionTitle, { color }]}>핵심기능</Text>
+              <View style={styles.featureList}>
+                {project.features.map((f, i) => (
+                  <View key={i} style={styles.featureItem}>
+                    <View style={[styles.featureDot, { backgroundColor: color }]} />
+                    <Text style={styles.featureText}>{f}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+
+            <View style={[styles.colDivider, { backgroundColor: color + '20' }]} />
+
+            {/* 주요 성과 */}
+            <View style={styles.infoCol}>
+              <Text style={[styles.infoSectionTitle, { color }]}>주요 성과</Text>
+              <View style={styles.achievementList}>
+                {project.highlights.map((h, i) => (
+                  <View key={i} style={styles.achievementItem}>
+                    <Text style={styles.achievementIcon}>{h.icon}</Text>
+                    <Text style={styles.achievementText}>{h.text}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+          </View>
+
+          {/* 기술스택 */}
+          <View style={styles.stackSection}>
+            <View style={styles.stackRow}>
+              {project.stack.map((s, i) => (
+                <View key={i} style={[styles.stackTag, { backgroundColor: color + '10' }]}>
+                  <Text style={[styles.stackTagText, { color }]}>{s}</Text>
                 </View>
               ))}
             </View>
           </View>
-
-          <View style={[styles.colDivider, { backgroundColor: color + '20' }]} />
-
-          {/* 주요 성과 */}
-          <View style={styles.infoCol}>
-            <Text style={[styles.infoSectionTitle, { color }]}>주요 성과</Text>
-            <View style={styles.achievementList}>
-              {project.highlights.map((h, i) => (
-                <View key={i} style={styles.achievementItem}>
-                  <Text style={styles.achievementIcon}>{h.icon}</Text>
-                  <Text style={styles.achievementText}>{h.text}</Text>
-                </View>
-              ))}
-            </View>
-          </View>
         </View>
 
-        {/* 기술스택 */}
-        <View style={styles.stackSection}>
-          <View style={styles.stackRow}>
-            {project.stack.map((s, i) => (
-              <View key={i} style={[styles.stackTag, { backgroundColor: color + '10' }]}>
-                <Text style={[styles.stackTagText, { color }]}>{s}</Text>
-              </View>
-            ))}
+        {/* Phone Gallery */}
+        {project.screenshots && project.screenshots.length >= 3 && (
+          <View style={[styles.phoneGalleryWrap, { borderLeftColor: color + '15' }]}>
+            <PhoneGallery screenshots={project.screenshots} color={color} />
           </View>
-        </View>
+        )}
       </View>
     </View>
   );
@@ -320,9 +440,24 @@ const styles = StyleSheet.create({
     width: 5,
     flexShrink: 0,
   },
+  featuredRow: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'stretch',
+  },
   featuredBody: {
     flex: 1,
     padding: 28,
+  },
+  phoneGalleryWrap: {
+    width: 340,
+    flexShrink: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderLeftWidth: 1,
+    paddingVertical: 28,
+    paddingHorizontal: 16,
+    backgroundColor: C.bgAlt,
   },
 
   // Card header
@@ -631,5 +766,39 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: C.textMuted,
     fontWeight: '500',
+  },
+});
+
+const galSt = StyleSheet.create({
+  wrap: {
+    width: 300,
+    height: 280,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  glow: {
+    position: 'absolute',
+    width: 260,
+    height: 220,
+    borderRadius: 130,
+    top: 20,
+    left: 20,
+  },
+  phoneLeft: {
+    position: 'absolute',
+    left: 8,
+    zIndex: 1,
+  },
+  phoneCenter: {
+    position: 'absolute',
+    zIndex: 3,
+    shadowOpacity: 0.55,
+    shadowRadius: 24,
+  },
+  phoneRight: {
+    position: 'absolute',
+    right: 8,
+    zIndex: 2,
   },
 });

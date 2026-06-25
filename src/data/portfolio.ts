@@ -58,6 +58,7 @@ export interface FeaturedProject {
   features: string[];
   highlights: Highlight[];
   stack: string[];
+  screenshots?: any[];
 }
 
 export interface AdditionalProject {
@@ -365,6 +366,12 @@ export const featuredProjects: FeaturedProject[] = [
       { icon: '🔗', text: '피카플레이 계정 통합 완료' },
     ],
     stack: ['Kotlin', 'MVVM', 'Hilt', 'Jetpack Compose', 'Databinding', 'Coroutine', 'Flow', 'Retrofit2', 'OkHttp3', 'CameraX', 'ML Kit', 'FCM', 'Firebase', 'AdPopcorn SSP', 'OAuth 2.0', 'GitLab CI/CD', 'Claude Code CLI', 'Claude AI'],
+    screenshots: [
+      require('../../assets/screenshots/pikaplay_1.jpg'),
+      require('../../assets/screenshots/pikaplay_2.jpg'),
+      require('../../assets/screenshots/pikaplay_3.jpg'),
+      require('../../assets/screenshots/pikaplay_4.jpg'),
+    ],
   },
   {
     id: 2,
@@ -389,6 +396,12 @@ export const featuredProjects: FeaturedProject[] = [
       { icon: '🤖', text: 'LLM 기반 AI 작가 기능 추가' },
     ],
     stack: ['Kotlin', 'MVVM', 'Hilt', 'AAC', 'Databinding', 'RxJava', 'Coroutine', 'Retrofit2', 'OkHttp3', 'Gson', 'Glide', 'WebSocket', 'In-app Billing', 'Firebase', 'Jenkins', 'GitLab'],
+    screenshots: [
+      require('../../assets/screenshots/maimovie_1.jpg'),
+      require('../../assets/screenshots/maimovie_2.jpg'),
+      require('../../assets/screenshots/maimovie_3.jpg'),
+      require('../../assets/screenshots/maimovie_4.jpg'),
+    ],
   },
   {
     id: 3,
@@ -413,6 +426,12 @@ export const featuredProjects: FeaturedProject[] = [
       { icon: '🌍', text: '3개 국어 다국어 지원' },
     ],
     stack: ['Kotlin', 'MVVM', 'Hilt', 'AAC', 'Databinding', 'RxJava', 'Coroutine', 'Retrofit2', 'OkHttp3', 'Gson', 'Glide', 'OpenCV', 'In-app Billing', 'Firebase'],
+    screenshots: [
+      require('../../assets/screenshots/alphado_1.jpg'),
+      require('../../assets/screenshots/alphado_2.jpg'),
+      require('../../assets/screenshots/alphado_3.jpg'),
+      require('../../assets/screenshots/alphado_4.jpg'),
+    ],
   },
 ];
 

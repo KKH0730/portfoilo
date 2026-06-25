@@ -1,5 +1,5 @@
-import React, { useMemo, useRef, useState } from 'react';
-import { View, Text, Image, Animated, StyleSheet, LayoutChangeEvent, Dimensions } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { View, Text, Image, Animated, StyleSheet, LayoutChangeEvent } from 'react-native';
 import { career } from '../data/portfolio';
 import C from '../theme/colors';
 
@@ -11,8 +11,6 @@ const companyLogos: Record<number, any> = {
 
 const steps = [...career].reverse(); // 알파도 → 키토크 → 미디어웹
 
-const WH = Dimensions.get('window').height;
-const NAV_H = 64;
 const CHAR_H = 90;
 const DOT_SIZE = 60;
 const DOT_COL_W = 80;
@@ -95,23 +93,7 @@ export default function Career({ onLayout, scrollY, sectionY }: CareerProps) {
     }
   };
 
-  const characterTop = useMemo(() => {
-    if (stepYs.length < 3 || sectionY === 0) {
-      return scrollY.interpolate({ inputRange: [0, 1], outputRange: [-300, -300] });
-    }
-    const dotTopOffset = ROW_PAD_TOP;
-    const targets = stepYs.map((y) => y + dotTopOffset - CHAR_H);
-    return scrollY.interpolate({
-      inputRange: [
-        sectionY - WH + NAV_H,
-        sectionY - WH * 0.67 + NAV_H,
-        sectionY - WH * 0.33 + NAV_H,
-        Math.max(0, sectionY - NAV_H),
-      ],
-      outputRange: [targets[0], targets[1], targets[2], targets[2]],
-      extrapolate: 'clamp',
-    });
-  }, [stepYs, sectionY, scrollY]);
+  const characterTop = stepYs.length >= 3 ? stepYs[2] + ROW_PAD_TOP - CHAR_H : -300;
 
   return (
     <View style={styles.section} onLayout={onLayout} nativeID="career">
@@ -183,7 +165,7 @@ export default function Career({ onLayout, scrollY, sectionY }: CareerProps) {
 const styles = StyleSheet.create({
   section: {
     backgroundColor: C.bg,
-    paddingVertical: 96,
+    paddingVertical: 64,
     paddingHorizontal: 40,
   },
   inner: {

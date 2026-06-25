@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, Image, StyleSheet, LayoutChangeEvent } from 'react-native';
 import { featuredProjects, additionalProjects, FeaturedProject, AdditionalProject } from '../data/portfolio';
 import C from '../theme/colors';
@@ -83,9 +83,9 @@ function FeaturedCard({ project }: { project: FeaturedProject }) {
 
 // ─── Additional Card ─────────────────────────────────────────────────────────
 
-function AdditionalCard({ project }: { project: AdditionalProject }) {
+function AdditionalCard({ project, horizontal, cardWidth }: { project: AdditionalProject; horizontal?: boolean; cardWidth?: number }) {
   return (
-    <View style={styles.additionalCard}>
+    <View style={[styles.additionalCard, cardWidth != null && { width: cardWidth }, horizontal && { flexShrink: 0 }]}>
       <View style={styles.additionalTop}>
         <View style={styles.additionalTopLeft}>
           {project.logo ? (
@@ -103,7 +103,7 @@ function AdditionalCard({ project }: { project: AdditionalProject }) {
               ]}
             >
               <Text style={[styles.additionalLogoEmoji, { color: project.typeColor }]}>
-                {project.type === 'AI 도구' ? '🤖' : '📱'}
+                {project.logoEmoji ?? (project.type === 'AI 도구' ? '🤖' : '📱')}
               </Text>
             </View>
           )}
@@ -126,6 +126,8 @@ function AdditionalCard({ project }: { project: AdditionalProject }) {
           ✦ {project.highlight}
         </Text>
       </View>
+
+      <View style={styles.stackSpacer} />
 
       <View style={styles.additionalStackRow}>
         {project.stack.slice(0, 4).map((s, i) => (
@@ -150,9 +152,63 @@ interface ProjectsProps {
 }
 
 export default function Projects({ onLayout }: ProjectsProps) {
+  const personalScrollRef = useRef<any>(null);
+  const sideScrollRef = useRef<any>(null);
+  const [cardWidth, setCardWidth] = useState(352);
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+
+    // Inject CSS to hide scrollbars
+    const styleId = 'hscroll-style';
+    if (!document.getElementById(styleId)) {
+      const style = document.createElement('style');
+      style.id = styleId;
+      style.textContent = `#personal-project-scroll::-webkit-scrollbar,#side-project-scroll::-webkit-scrollbar{display:none!important}#personal-project-scroll,#side-project-scroll{scrollbar-width:none!important;-ms-overflow-style:none!important;}`;
+      document.head.appendChild(style);
+    }
+
+    const setupDrag = (el: HTMLElement) => {
+      let isDown = false;
+      let startX = 0;
+      let scrollLeft = 0;
+      const onMouseDown = (e: MouseEvent) => {
+        isDown = true;
+        startX = e.pageX - el.getBoundingClientRect().left;
+        scrollLeft = el.scrollLeft;
+        el.style.cursor = 'grabbing';
+        el.style.userSelect = 'none';
+      };
+      const onMouseUp = () => {
+        isDown = false;
+        el.style.cursor = 'grab';
+        el.style.userSelect = '';
+      };
+      const onMouseMove = (e: MouseEvent) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - el.getBoundingClientRect().left;
+        el.scrollLeft = scrollLeft - (x - startX);
+      };
+      el.addEventListener('mousedown', onMouseDown);
+      document.addEventListener('mouseup', onMouseUp);
+      document.addEventListener('mousemove', onMouseMove);
+      return () => {
+        el.removeEventListener('mousedown', onMouseDown);
+        document.removeEventListener('mouseup', onMouseUp);
+        document.removeEventListener('mousemove', onMouseMove);
+      };
+    };
+
+    const cleanups: (() => void)[] = [];
+    if (personalScrollRef.current) cleanups.push(setupDrag(personalScrollRef.current));
+    if (sideScrollRef.current) cleanups.push(setupDrag(sideScrollRef.current));
+    return () => cleanups.forEach((c) => c());
+  }, []);
+
   return (
     <View style={styles.section} onLayout={onLayout} nativeID="projects">
-      <View style={styles.inner}>
+      <View style={styles.inner} onLayout={(e) => setCardWidth(e.nativeEvent.layout.width * 0.285)}>
         <View style={styles.header}>
           <Text style={styles.sectionLabel}>Projects</Text>
           <Text style={styles.sectionTitle}>주요 프로젝트</Text>
@@ -179,11 +235,25 @@ export default function Projects({ onLayout }: ProjectsProps) {
                 <Text style={styles.categoryTitle}>{cat}</Text>
                 <View style={styles.categoryDivider} />
               </View>
-              <View style={styles.additionalGrid}>
-                {group.map((project, i) => (
-                  <AdditionalCard key={i} project={project} />
-                ))}
-              </View>
+              {cat === 'AI툴' ? (
+                <View style={styles.additionalGrid}>
+                  {group.map((project, i) => (
+                    <AdditionalCard key={i} project={project} cardWidth={cardWidth} />
+                  ))}
+                </View>
+              ) : (
+                <View
+                  ref={cat === '개인 프로젝트' ? personalScrollRef : sideScrollRef}
+                  nativeID={cat === '개인 프로젝트' ? 'personal-project-scroll' : 'side-project-scroll'}
+                  style={styles.hScrollOuter as any}
+                >
+                  <View style={styles.additionalGridH}>
+                    {group.map((project, i) => (
+                      <AdditionalCard key={i} project={project} horizontal cardWidth={cardWidth} />
+                    ))}
+                  </View>
+                </View>
+              )}
             </View>
           );
         })}
@@ -197,7 +267,7 @@ export default function Projects({ onLayout }: ProjectsProps) {
 const styles = StyleSheet.create({
   section: {
     backgroundColor: C.bgAlt,
-    paddingVertical: 96,
+    paddingVertical: 64,
     paddingHorizontal: 40,
   },
   inner: {
@@ -449,9 +519,17 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     gap: 20,
   },
+  hScrollOuter: {
+    overflowX: 'auto',
+    paddingBottom: 8,
+    cursor: 'grab',
+  } as any,
+  additionalGridH: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    gap: 16,
+  },
   additionalCard: {
-    flex: 1,
-    minWidth: 280,
     backgroundColor: C.white,
     borderRadius: 16,
     padding: 22,
@@ -534,6 +612,9 @@ const styles = StyleSheet.create({
   highlightPillText: {
     fontSize: 12,
     fontWeight: '700',
+  },
+  stackSpacer: {
+    flex: 1,
   },
   additionalStackRow: {
     flexDirection: 'row',

@@ -67,6 +67,7 @@ export interface AdditionalProject {
   type: string;
   typeColor: string;
   logo?: any;
+  logoEmoji?: string;
   description: string;
   stack: string[];
   highlight: string;
@@ -343,7 +344,7 @@ export const career: CareerCompany[] = [
 export const featuredProjects: FeaturedProject[] = [
   {
     id: 1,
-    title: '피카플레이 / 피카오더',
+    title: '피카플레이',
     company: '미디어웹',
     period: '2025 ~ 2026',
     category: '회사 프로젝트',
@@ -352,17 +353,18 @@ export const featuredProjects: FeaturedProject[] = [
     description:
       '피카 PC방 서비스의 Android 앱 개발. 7,000+ 매장 도입 주방 앱 단독 개발부터 소셜 로그인 계정 통합, AI 기반 CI/CD 자동화까지 핵심 기능 전반을 담당했습니다.',
     features: [
-      'PC방 7,000+ 매장 도입 주방 앱 단독 개발 (FCM 실시간 알림, DiffUtil 최적화)',
-      '소셜 로그인 4종 계정 통합 (Google·Naver·Kakao·Apple OAuth)',
-      'AI 기반 CI/CD 파이프라인 구축 (코드 리뷰·릴리즈 노트 자동화)',
-      '결제 오류 추적 및 개선 (Firebase Crashlytics 로그 분석)',
+      'FCM 기반 실시간 주문 알림 및 자동 갱신 (7,000+ PC방 주방 앱)',
+      'PG사 연동 결제 기능 (오류 추적·개선)',
+      'Google·Naver·Kakao·Apple 소셜 로그인 통합',
+      '애드팝콘 SSP 광고 수익화',
     ],
     highlights: [
       { icon: '📱', text: '앱 설치 19.3% 증가 (30만 → 35.8만)' },
-      { icon: '💳', text: '결제 오류 발생률 90% 감소' },
       { icon: '💰', text: '광고 수익 월 400만원+' },
+      { icon: '🤖', text: 'AI 기반 CI/CD 파이프라인 구축' },
+      { icon: '🔗', text: '피카플레이 계정 통합 완료' },
     ],
-    stack: ['Kotlin', 'MVVM', 'Hilt', 'Jetpack Compose', 'Coroutine', 'Flow', 'Retrofit2', 'OkHttp3', 'CameraX', 'ML Kit', 'FCM', 'Firebase', 'AdPopcorn SSP', 'OAuth 2.0', 'GitLab CI/CD', 'Claude AI'],
+    stack: ['Kotlin', 'MVVM', 'Hilt', 'Jetpack Compose', 'Databinding', 'Coroutine', 'Flow', 'Retrofit2', 'OkHttp3', 'CameraX', 'ML Kit', 'FCM', 'Firebase', 'AdPopcorn SSP', 'OAuth 2.0', 'GitLab CI/CD', 'Claude Code CLI', 'Claude AI'],
   },
   {
     id: 2,
@@ -375,17 +377,18 @@ export const featuredProjects: FeaturedProject[] = [
     description:
       '영화·방송 추천 서비스 Android 앱 개발 및 유지보수. Java → Kotlin, MVP → Clean Architecture 전환과 LLM 기반 AI 기능 추가, 트래픽 최적화를 담당했습니다.',
     features: [
-      'Java → Kotlin 전환 및 MVP → Clean Architecture + MVVM 리팩토링',
-      'LLM 기반 AI 작가 신규 기능 개발',
-      '메시지 캐싱 + Gzip 압축으로 트래픽 최적화',
-      'CI/CD 자동화 구축 (Jenkins + GitLab)',
+      '키토크 기반 취향 분석으로 개인화 영화·방송 추천',
+      '텍스트·음성인식·키토크 통합 검색 UI 개발',
+      'LLM 기반 AI 작가 기능 (WebSocket 채팅, Basic/Pro 정기결제)',
+      '카테고리별 실시간 키토크 랭킹 화면 개발',
     ],
     highlights: [
-      { icon: '📥', text: '누적 다운로드 10만+' },
+      { icon: '🔄', text: 'Java → Kotlin 전환' },
+      { icon: '🏗️', text: 'MVP → MVVM 아키텍처 전환' },
       { icon: '📉', text: '트래픽 30% 절감' },
       { icon: '🤖', text: 'LLM 기반 AI 작가 기능 추가' },
     ],
-    stack: ['Kotlin', 'MVVM', 'Hilt', 'AAC', 'Databinding', 'RxJava', 'Coroutine', 'Retrofit2', 'OkHttp3', 'WebSocket', 'In-app Billing', 'Firebase', 'Jenkins', 'GitLab'],
+    stack: ['Kotlin', 'MVVM', 'Hilt', 'AAC', 'Databinding', 'RxJava', 'Coroutine', 'Retrofit2', 'OkHttp3', 'Gson', 'Glide', 'WebSocket', 'In-app Billing', 'Firebase', 'Jenkins', 'GitLab'],
   },
   {
     id: 3,
@@ -398,10 +401,10 @@ export const featuredProjects: FeaturedProject[] = [
     description:
       '반려동물 건강 스마트 관리 앱 전체 개발. 소변검사 키트 카메라 ROI 추출, AI 기반 질병 진단, e-commerce 결제·멤버십 구독 기능을 구현했습니다.',
     features: [
-      '소변검사 키트 카메라 ROI 추출 기능 개발 (정확도 15% 향상)',
-      'AI 기반 반려동물 신체 질병 진단 기능 개발',
-      'e-commerce 결제 및 멤버십 구독 기능 개발',
-      '중국어·영어·일본어 다국어 지원',
+      '소변검사 키트 카메라 ROI 추출 및 AI 분석 (정확도 15% 향상)',
+      'AI 기반 반려동물 신체 질병 진단',
+      '반려용품 e-commerce 결제 및 멤버십 구독',
+      '반려동물 건강 기록 및 이력 관리',
     ],
     highlights: [
       { icon: '📥', text: '누적 다운로드 5천+' },
@@ -409,12 +412,24 @@ export const featuredProjects: FeaturedProject[] = [
       { icon: '⚡', text: '빌드시간 20% 단축' },
       { icon: '🌍', text: '3개 국어 다국어 지원' },
     ],
-    stack: ['Kotlin', 'MVVM', 'Hilt', 'AAC', 'Databinding', 'RxJava', 'Coroutine', 'Retrofit2', 'OkHttp3', 'OpenCV', 'In-app Billing', 'Firebase'],
+    stack: ['Kotlin', 'MVVM', 'Hilt', 'AAC', 'Databinding', 'RxJava', 'Coroutine', 'Retrofit2', 'OkHttp3', 'Gson', 'Glide', 'OpenCV', 'In-app Billing', 'Firebase'],
   },
 ];
 
 export const additionalProjects: AdditionalProject[] = [
   // 개인 프로젝트
+  {
+    title: '털뭉치들',
+    period: '2021.02 ~ 2021.03',
+    category: '개인 프로젝트',
+    type: 'SNS',
+    typeColor: '#7C6FFF',
+    logo: require('../../assets/project-logos/teolmungchi.webp'),
+    description:
+        '반려동물 사진·일상 공유 SNS 앱. 커뮤니티, 채팅, 팔로잉·팔로우, FCM 전송 기능 전체를 1인 기획·개발·서버 담당.',
+    stack: ['Kotlin', 'MVVM', 'Firebase', 'Firestore', 'Realtime Database', 'Koin', 'Coroutine', 'AAC'],
+    highlight: '기획·개발·서버 1인 전담',
+  },
   {
     title: '틀린그림쏙쏙',
     period: '2022.10 ~ 2023.03',
@@ -424,7 +439,7 @@ export const additionalProjects: AdditionalProject[] = [
     logo: require('../../assets/project-logos/teurin-geurim.webp'),
     description:
       '두 이미지의 차이점 찾기 퍼즐 게임 앱. OpenCV로 차이점 자동 검출, Jetpack Compose 첫 적용 프로젝트.',
-    stack: ['Kotlin', 'Jetpack Compose', 'OpenCV', 'Hilt', 'Firebase', 'Admob'],
+    stack: ['Kotlin', 'Jetpack Compose', 'OpenCV', 'Hilt', 'Firebase', 'Admob', 'Coroutine', 'Flow', 'AAC'],
     highlight: 'Jetpack Compose 첫 도입',
   },
   {
@@ -436,22 +451,58 @@ export const additionalProjects: AdditionalProject[] = [
     logo: require('../../assets/project-logos/tradewave.webp'),
     description:
       '암호화폐 시세 확인 및 자동 매매 앱. WebSocket 실시간 시세, 백테스트 기능, Foreground Service 기반 자동 매매 로직 구현.',
-    stack: ['Kotlin', 'Jetpack Compose', 'Clean Architecture', 'WebSocket', 'Firebase'],
+    stack: ['Kotlin', 'Jetpack Compose', 'Clean Architecture', 'WebSocket', 'Spring Boot', 'Firebase', 'Coroutine', 'Flow', 'Retrofit2'],
     highlight: '자동 매매 수익률 10%+',
   },
   {
-    title: '털뭉치들',
-    period: '2021.02 ~ 2021.03',
+    title: 'MoneyLog',
+    period: '2026.06 ~ 현재',
     category: '개인 프로젝트',
-    type: 'SNS',
-    typeColor: '#7C6FFF',
-    logo: require('../../assets/project-logos/teolmungchi.webp'),
+    type: '가계부',
+    typeColor: '#10B981',
+    logoEmoji: '💰',
     description:
-      '반려동물 사진·일상 공유 SNS 앱. 커뮤니티, 채팅, 팔로잉·팔로우, FCM 전송 기능 전체를 1인 기획·개발·서버 담당.',
-    stack: ['Kotlin', 'MVVM', 'Firebase', 'Firestore', 'Realtime Database', 'Koin'],
-    highlight: '기획·개발·서버 1인 전담',
+        'Firebase + Claude AI로 영수증을 자동 분석하는 개인 가계부 앱. 촬영 한 장으로 지출 항목 자동 기록, SVG 라인 차트로 소비 패턴 시각화.',
+    stack: ['React Native', 'TypeScript', 'Firebase', 'Claude AI', 'Expo SDK 54', 'react-native-svg', 'AsyncStorage'],
+    highlight: 'AI 영수증 자동 분석 · 소비 그래프 시각화',
   },
   // 사이드 프로젝트
+  {
+    title: '타이머 플러스',
+    period: '2022 ~ 2023',
+    category: '사이드 프로젝트',
+    type: '외주',
+    typeColor: '#22D3B8',
+    logo: require('../../assets/project-logos/timer-plus.png'),
+    description:
+      'Foreground Service 기반 타이머 앱. 화면이 꺼져도 백그라운드에서 계속 동작하며, 시간 종료 시 알림·진동으로 알려줌.',
+    stack: ['Java', 'WorkManager', 'Foreground Service', 'DataBinding'],
+    highlight: '백그라운드 타이머',
+  },
+  {
+    title: '제보 모아',
+    period: '2022 ~ 2023',
+    category: '사이드 프로젝트',
+    type: '외주',
+    typeColor: '#22D3B8',
+    logo: require('../../assets/project-logos/tipoff.png'),
+    description:
+      '제보·신고 수집 앱. Room DB로 제보 목록을 로컬 저장·관리하고, 작성된 제보 내용을 이메일로 전송하는 신고 플랫폼.',
+    stack: ['Java', 'Room', 'DataBinding', 'Material Design'],
+    highlight: 'Room DB + 이메일 전송 제보 시스템',
+  },
+  {
+    title: '뚜러요 파트너스',
+    period: '2022 ~ 2023',
+    category: '사이드 프로젝트',
+    type: '외주',
+    typeColor: '#22D3B8',
+    logo: require('../../assets/project-logos/ddurero-partner.png'),
+    description:
+      '청소 서비스 파트너(청소 기사)용 외주 앱. 파트너 일정 확인, 예약 관리, 서비스 현황 조회 기능 제공.',
+    stack: ['Java', 'Kotlin', 'MVVM', 'Retrofit2', 'Firebase', 'Material Design'],
+    highlight: '청소 서비스 파트너 전용 앱',
+  },
   {
     title: '처음부터 울쎄라',
     period: '2024.04 ~ 2024.07',
@@ -460,11 +511,22 @@ export const additionalProjects: AdditionalProject[] = [
     typeColor: '#22D3B8',
     logo: require('../../assets/project-logos/ulthera.webp'),
     description:
-      '피부 시술 업체 외주 앱. QR 코드 포인트 적립, 포인트 몰, FCM 알림. 5인 팀 협업 (기획·디자인·Android·iOS·백엔드).',
-    stack: ['Kotlin', 'Clean Architecture', 'Hilt', 'Flow', 'FCM', 'Retrofit2'],
+        '피부 시술 업체 외주 앱. QR 코드 포인트 적립, 포인트 몰, FCM 알림. 5인 팀 협업 (기획·디자인·Android·iOS·백엔드).',
+    stack: ['Kotlin', 'Hilt', 'Coroutine', 'Flow', 'Retrofit2', 'FCM', 'AAC', 'OkHttp3'],
     highlight: '누적 다운로드 5만+',
   },
   // AI툴
+  {
+    title: 'Cowork-ai',
+    period: '2026.03 ~ 2026.05',
+    category: 'AI툴',
+    type: 'AI 도구',
+    typeColor: '#F97316',
+    description:
+        '멀티 LLM 에이전트 시스템으로 Android 개발 전 주기를 자동화하는 내부 AI 협업 플랫폼. 리드·개발·테스터 에이전트 협업으로 개발 생산성 5배 향상.',
+    stack: ['Claude Code CLI', 'Anthropic API', 'Kotlin', 'Jetpack Compose', 'JUnit', 'MockK', 'Hilt', 'Coroutine'],
+    highlight: '개발 생산성 5배 향상',
+  },
   {
     title: 'JiraPilot',
     period: '2026.04 ~ 2026.05',
@@ -473,19 +535,8 @@ export const additionalProjects: AdditionalProject[] = [
     typeColor: '#F97316',
     description:
       '기획서를 AI로 분석하여 Jira 이슈(에픽·스토리·서브태스크)를 자동 생성하는 내부 개발 도구. Gemini Function Calling 적용.',
-    stack: ['React 19', 'TypeScript', 'Node.js', 'Gemini API', 'Jira REST API', 'SSE'],
+    stack: ['React 19', 'TypeScript', 'Node.js', 'Gemini API', 'Jira REST API', 'Vite', 'Express.js', 'Confluence REST API'],
     highlight: '이슈 등록 반복 작업 자동화',
-  },
-  {
-    title: 'Cowork-ai',
-    period: '2026.03 ~ 2026.05',
-    category: 'AI툴',
-    type: 'AI 도구',
-    typeColor: '#F97316',
-    description:
-      '멀티 LLM 에이전트 시스템으로 Android 개발 전 주기를 자동화하는 내부 AI 협업 플랫폼. 리드·개발·테스터 에이전트 협업으로 개발 생산성 5배 향상.',
-    stack: ['Kotlin', 'Jetpack Compose', 'Claude Code CLI', 'Gemini AI', 'Hilt', 'Espresso'],
-    highlight: '개발 생산성 5배 향상',
   },
 ];
 
@@ -495,10 +546,10 @@ export const skills: SkillCategory[] = [
     icon: '💻',
     keyItems: [
       { name: 'Kotlin', level: 95 },
-      { name: 'Java', level: 75 },
+      { name: 'Java', level: 90 },
       { name: 'Swift', level: 65 },
-      { name: 'TypeScript', level: 60 },
-      { name: 'Dart', level: 60 },
+      { name: 'TypeScript', level: 55 },
+      { name: 'Dart', level: 55 },
     ],
     items: [],
   },
@@ -508,8 +559,9 @@ export const skills: SkillCategory[] = [
     keyItems: [
       { name: 'Android (XML)', level: 95 },
       { name: 'Jetpack Compose', level: 95 },
-      { name: 'React Native', level: 70 },
-      { name: 'Flutter', level: 70 },
+      { name: 'iOS', level: 65 },
+      { name: 'React Native', level: 60 },
+      { name: 'Flutter', level: 60 },
     ],
     items: [],
   },

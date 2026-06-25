@@ -13,7 +13,7 @@ function EnvChip({ tool }: { tool: (typeof devEnvironment)[0] }) {
 
   return (
     <Animated.View
-      style={[styles.envChip, { borderColor: tool.color + '35', transform: [{ scale }] }]}
+      style={[styles.envChip, { borderColor: tool.color + '70', transform: [{ scale }] }]}
       {...({ onMouseEnter: onHoverIn, onMouseLeave: onHoverOut } as any)}
     >
       <View style={[styles.envChipIconWrap, { backgroundColor: tool.color + '12' }]}>
@@ -108,7 +108,7 @@ export default function Skills({ onLayout }: SkillsProps) {
           <View style={styles.aiHeader}>
             <View style={styles.aiTitleRow}>
               <Text style={styles.aiTitleIcon}>✦</Text>
-              <Text style={styles.aiTitle}>AI-Augmented Development</Text>
+              <Text style={styles.aiTitle}>AI 활용 개발</Text>
             </View>
             <Text style={styles.aiSub}>
               AI 도구를 개발 워크플로우에 통합하여 생산성을 극대화합니다
@@ -144,7 +144,7 @@ export default function Skills({ onLayout }: SkillsProps) {
 const styles = StyleSheet.create({
   section: {
     backgroundColor: C.bg,
-    paddingVertical: 96,
+    paddingVertical: 64,
     paddingHorizontal: 40,
   },
   inner: {
@@ -176,8 +176,7 @@ const styles = StyleSheet.create({
     marginBottom: 60,
   },
   categoryCard: {
-    flex: 1,
-    minWidth: 240,
+    width: '32%',
     backgroundColor: C.white,
     borderRadius: 16,
     padding: 22,

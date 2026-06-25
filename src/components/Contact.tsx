@@ -90,9 +90,8 @@ export default function Contact({ onLayout }: ContactProps) {
 const styles = StyleSheet.create({
   section: {
     backgroundColor: C.bgAlt,
-    paddingVertical: 96,
+    paddingVertical: 64,
     paddingHorizontal: 40,
-    paddingBottom: 60,
   },
   inner: {
     maxWidth: 1100,

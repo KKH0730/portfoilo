@@ -17,7 +17,7 @@ const pillars: Pillar[] = [
   {
     icon: '🏗️',
     title: '아키텍처 설계',
-    desc: 'Java → Kotlin, MVP → Clean Architecture + MVVM 전환 주도. 유지보수 가능한 구조를 처음부터 설계합니다.',
+    desc: 'Java → Kotlin, MVP → Clean Architecture + MVVM or MVI 전환 주도. 유지보수 가능한 구조를 처음부터 설계합니다.',
   },
   {
     icon: '💳',
@@ -71,7 +71,7 @@ export default function About({ onLayout }: AboutProps) {
 const styles = StyleSheet.create({
   section: {
     backgroundColor: C.bgAlt,
-    paddingVertical: 96,
+    paddingVertical: 64,
     paddingHorizontal: 40,
   },
   inner: {

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, Image, StyleSheet, LayoutChangeEvent } from 'react-native';
+import { View, Text, Image, StyleSheet, LayoutChangeEvent, Animated } from 'react-native';
 import { featuredProjects, additionalProjects, FeaturedProject, AdditionalProject } from '../data/portfolio';
 import C from '../theme/colors';
 
@@ -13,23 +13,34 @@ const BEZEL = 11;
 
 function PhoneMockup({ source, style }: { source: any; style?: any }) {
   return (
-    <View style={[phoneSt.phone, style]}>
-      {/* Side button */}
+    <View style={[phoneSt.wrapper, style]}>
+      {/* Side button (outside clip area) */}
       <View style={phoneSt.sideBtn} />
-      {/* Volume buttons */}
+      {/* Volume buttons (outside clip area) */}
       <View style={[phoneSt.volBtn, { top: 110 }]} />
       <View style={[phoneSt.volBtn, { top: 155 }]} />
-      {/* Screen */}
-      <View style={phoneSt.screen}>
-        <Image source={source} style={phoneSt.screenImg} resizeMode="cover" />
-        {/* Dynamic island */}
-        <View style={phoneSt.dynamicIsland} />
+      {/* Phone frame — clips content */}
+      <View style={phoneSt.phone}>
+        {/* Screen */}
+        <View style={phoneSt.screen}>
+          <Image source={source} style={phoneSt.screenImg} resizeMode="cover" />
+          {/* Dynamic island */}
+          <View style={phoneSt.dynamicIsland} />
+        </View>
       </View>
     </View>
   );
 }
 
+const INNER_W = PHONE_W - BEZEL * 2 - 4;
+const INNER_H = PHONE_H - BEZEL * 2 - 4;
+
 const phoneSt = StyleSheet.create({
+  wrapper: {
+    width: PHONE_W,
+    height: PHONE_H,
+    position: 'relative',
+  },
   phone: {
     width: PHONE_W,
     height: PHONE_H,
@@ -37,11 +48,13 @@ const phoneSt = StyleSheet.create({
     backgroundColor: '#18181b',
     borderWidth: 2,
     borderColor: '#3f3f46',
-    overflow: 'visible',
+    overflow: 'hidden',
+    padding: BEZEL,
     shadowColor: '#000',
     shadowOpacity: 0.45,
     shadowRadius: 16,
     shadowOffset: { width: 0, height: 8 },
+    isolation: 'isolate' as any,
   },
   sideBtn: {
     position: 'absolute',
@@ -51,6 +64,7 @@ const phoneSt = StyleSheet.create({
     height: 48,
     borderRadius: 2,
     backgroundColor: '#3f3f46',
+    zIndex: 2,
   },
   volBtn: {
     position: 'absolute',
@@ -59,20 +73,18 @@ const phoneSt = StyleSheet.create({
     height: 26,
     borderRadius: 2,
     backgroundColor: '#3f3f46',
+    zIndex: 2,
   },
   screen: {
-    position: 'absolute',
-    top: BEZEL,
-    left: BEZEL,
-    right: BEZEL,
-    bottom: BEZEL,
+    width: INNER_W,
+    height: INNER_H,
     borderRadius: SCREEN_RADIUS,
     backgroundColor: '#000',
     overflow: 'hidden',
   },
   screenImg: {
-    width: '100%',
-    height: '100%',
+    width: INNER_W,
+    height: INNER_H,
   },
   dynamicIsland: {
     position: 'absolute',
@@ -86,29 +98,85 @@ const phoneSt = StyleSheet.create({
   },
 });
 
-// ─── Phone Gallery (3 staggered phones) ──────────────────────────────────────
+// ─── Phone Gallery ────────────────────────────────────────────────────────────
 
-function PhoneGallery({ screenshots, color }: { screenshots: any[]; color: string }) {
+type GalleryLayout = 'stagger' | 'deck' | 'spread';
+
+function useFloat(amplitude: number, duration: number, delay: number) {
+  const anim = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(anim, { toValue: -amplitude, duration, delay, useNativeDriver: true, easing: (t) => Math.sin(t * Math.PI) }),
+        Animated.timing(anim, { toValue: amplitude, duration, delay: 0, useNativeDriver: true, easing: (t) => Math.sin(t * Math.PI) }),
+      ])
+    );
+    loop.start();
+    return () => loop.stop();
+  }, []);
+  return anim;
+}
+
+function PhoneGallery({ screenshots, color, layout = 'stagger' }: { screenshots: any[]; color: string; layout?: GalleryLayout }) {
   if (!screenshots || screenshots.length < 3) return null;
+  const f0 = useFloat(12, 2000, 0);
+  const f1 = useFloat(10, 1800, 400);
+  const f2 = useFloat(9,  1600, 700);
+
   return (
-    <View style={galSt.wrap}>
-      {/* Background glow */}
+    <View style={[galSt.wrap, { overflow: 'visible' } as any]}>
       <View style={[galSt.glow, { backgroundColor: color + '18' }]} />
-      {/* Left phone */}
-      <PhoneMockup
-        source={screenshots[1]}
-        style={[galSt.phoneLeft, { transform: [{ rotate: '-8deg' }, { translateY: 20 }] }]}
-      />
-      {/* Center phone (front) */}
-      <PhoneMockup
-        source={screenshots[0]}
-        style={[galSt.phoneCenter]}
-      />
-      {/* Right phone */}
-      <PhoneMockup
-        source={screenshots[2]}
-        style={[galSt.phoneRight, { transform: [{ rotate: '8deg' }, { translateY: 20 }] }]}
-      />
+
+      {layout === 'stagger' && <>
+        {/* 좌우 기울기 + 아래 배치 */}
+        <Animated.View style={[galSt.phoneLeft, { transform: [{ translateY: f1 }] }]}>
+          <View style={{ transform: [{ rotate: '-8deg' }, { translateY: 20 }] }}>
+            <PhoneMockup source={screenshots[1]} />
+          </View>
+        </Animated.View>
+        <Animated.View style={[galSt.phoneCenter, { transform: [{ translateY: f0 }] }]}>
+          <View style={{ transform: [{ rotate: '0deg' }] }}><PhoneMockup source={screenshots[0]} /></View>
+        </Animated.View>
+        <Animated.View style={[galSt.phoneRight, { transform: [{ translateY: f2 }] }]}>
+          <View style={{ transform: [{ rotate: '8deg' }, { translateY: 20 }] }}>
+            <PhoneMockup source={screenshots[2]} />
+          </View>
+        </Animated.View>
+      </>}
+
+      {layout === 'deck' && <>
+        {/* 카드 덱 — 뒤 두 장이 비스듬히 겹쳐 보임 */}
+        <Animated.View style={[galSt.phoneLeft, { transform: [{ translateY: f1 }] }]}>
+          <View style={{ transform: [{ rotate: '-15deg' }, { translateY: 24 }] }}>
+            <PhoneMockup source={screenshots[1]} />
+          </View>
+        </Animated.View>
+        <Animated.View style={[galSt.phoneRight, { transform: [{ translateY: f2 }] }]}>
+          <View style={{ transform: [{ rotate: '7deg' }, { translateY: 10 }] }}>
+            <PhoneMockup source={screenshots[2]} />
+          </View>
+        </Animated.View>
+        <Animated.View style={[galSt.phoneCenter, { transform: [{ translateY: f0 }] }]}>
+          <View style={{ transform: [{ rotate: '0deg' }] }}><PhoneMockup source={screenshots[0]} /></View>
+        </Animated.View>
+      </>}
+
+      {layout === 'spread' && <>
+        {/* 부채꼴 — 중심에서 좌우로 크게 펼침 */}
+        <Animated.View style={[galSt.phoneLeft, { transform: [{ translateY: f1 }] }]}>
+          <View style={{ transform: [{ rotate: '-16deg' }, { translateY: 44 }] }}>
+            <PhoneMockup source={screenshots[1]} />
+          </View>
+        </Animated.View>
+        <Animated.View style={[galSt.phoneCenter, { transform: [{ translateY: f0 }] }]}>
+          <View style={{ transform: [{ rotate: '0deg' }] }}><PhoneMockup source={screenshots[0]} /></View>
+        </Animated.View>
+        <Animated.View style={[galSt.phoneRight, { transform: [{ translateY: f2 }] }]}>
+          <View style={{ transform: [{ rotate: '16deg' }, { translateY: 44 }] }}>
+            <PhoneMockup source={screenshots[2]} />
+          </View>
+        </Animated.View>
+      </>}
     </View>
   );
 }
@@ -793,8 +861,6 @@ const galSt = StyleSheet.create({
   phoneCenter: {
     position: 'absolute',
     zIndex: 3,
-    shadowOpacity: 0.55,
-    shadowRadius: 24,
   },
   phoneRight: {
     position: 'absolute',

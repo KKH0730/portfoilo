@@ -364,6 +364,7 @@ export const featuredProjects: FeaturedProject[] = [
       { icon: '💰', text: '광고 수익 월 400만원+' },
       { icon: '🤖', text: 'AI 기반 CI/CD 파이프라인 구축' },
       { icon: '🔗', text: '피카플레이 계정 통합 완료' },
+      { icon: '🧪', text: 'Firebase Robo Test 정기 자동화로 앱 구동 이상 조기 감지' },
     ],
     stack: ['Kotlin', 'MVVM', 'Hilt', 'Jetpack Compose', 'Databinding', 'Coroutine', 'Flow', 'Retrofit2', 'OkHttp3', 'CameraX', 'ML Kit', 'FCM', 'Firebase', 'AdPopcorn SSP', 'OAuth 2.0', 'GitLab CI/CD', 'Claude Code CLI', 'Claude AI'],
     screenshots: [
@@ -470,7 +471,7 @@ export const additionalProjects: AdditionalProject[] = [
     logo: require('../../assets/project-logos/tradewave.webp'),
     description:
       '암호화폐 시세 확인 및 자동 매매 앱. WebSocket 실시간 시세, 백테스트 기능, Foreground Service 기반 자동 매매 로직 구현.',
-    stack: ['Kotlin', 'Jetpack Compose', 'Clean Architecture', 'WebSocket', 'Spring Boot', 'Firebase', 'Coroutine', 'Flow', 'Retrofit2'],
+    stack: ['Kotlin', 'Jetpack Compose', 'WebSocket', 'Spring Boot', 'Firebase', 'Coroutine', 'Flow', 'Retrofit2'],
     highlight: '자동 매매 수익률 10%+',
   },
   {
@@ -609,14 +610,13 @@ export const skills: SkillCategory[] = [
     items: [],
   },
   {
-    category: 'Firebase & 백엔드',
+    category: '백엔드',
     icon: '🔥',
     keyItems: [
-      { name: 'FCM', level: 85 },
-      { name: 'Crashlytics', level: 85 },
-      { name: 'App Distribution', level: 80 },
-      { name: 'Node.js / Express', level: 65 },
-      { name: 'MySQL / SQLite', level: 65 },
+      { name: 'Firebase', level: 85 },
+      { name: 'Spring Boot', level: 50 },
+      { name: 'Node.js / Express', level: 50 },
+      { name: 'MySQL / SQLite', level: 50 },
     ],
     items: [],
   },

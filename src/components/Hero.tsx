@@ -25,7 +25,7 @@ export default function Hero({ onLayout }: HeroProps) {
           <View style={styles.leftCol}>
             {/* Role */}
             <View style={styles.roleRow}>
-              <View style={styles.roleDot} />
+              <Image source={require('../../assets/favicon.png')} style={styles.roleFavicon} resizeMode="contain" />
               <Text style={styles.roleText}>Android Developer</Text>
             </View>
 
@@ -109,7 +109,6 @@ export default function Hero({ onLayout }: HeroProps) {
                 style={styles.photo}
                 resizeMode="cover"
               />
-              <View style={styles.photoBorder} />
             </View>
           </View>
 
@@ -151,11 +150,9 @@ const styles = StyleSheet.create({
     gap: 10,
     marginBottom: 28,
   },
-  roleDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#22C55E',
+  roleFavicon: {
+    width: 20,
+    height: 20,
   },
   roleText: {
     fontSize: 14,
@@ -319,9 +316,13 @@ const styles = StyleSheet.create({
     paddingTop: 48,
   },
   photoWrap: {
-    position: 'relative',
+    width: 272,
+    height: 332,
   },
   photo: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
     width: 260,
     height: 320,
     borderRadius: 24,
@@ -335,6 +336,5 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     borderWidth: 2,
     borderColor: C.accent + '30',
-    zIndex: -1,
   },
 });

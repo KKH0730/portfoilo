@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Linking, LayoutChangeEvent } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Linking, LayoutChangeEvent, useWindowDimensions } from 'react-native';
 import { personal } from '../data/portfolio';
 import C from '../theme/colors';
 
@@ -47,10 +47,12 @@ interface ContactProps {
 }
 
 export default function Contact({ onLayout }: ContactProps) {
+  const { width } = useWindowDimensions();
+  const isMobile = width < 768;
   const openLink = (url: string) => Linking.openURL(url);
 
   return (
-    <View style={styles.section} onLayout={onLayout} nativeID="contact">
+    <View style={[styles.section, isMobile && styles.sectionMobile]} onLayout={onLayout} nativeID="contact">
       <View style={styles.inner}>
         <View style={styles.header}>
           <Text style={styles.sectionLabel}>Contact</Text>
@@ -92,6 +94,10 @@ const styles = StyleSheet.create({
     backgroundColor: C.bgAlt,
     paddingVertical: 64,
     paddingHorizontal: 40,
+  },
+  sectionMobile: {
+    paddingHorizontal: 16,
+    paddingVertical: 48,
   },
   inner: {
     maxWidth: 1100,

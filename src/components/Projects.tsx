@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, Image, StyleSheet, LayoutChangeEvent, Animated } from 'react-native';
+import { View, Text, Image, StyleSheet, LayoutChangeEvent, Animated, useWindowDimensions } from 'react-native';
 import { featuredProjects, additionalProjects, FeaturedProject, AdditionalProject } from '../data/portfolio';
 import C from '../theme/colors';
 
@@ -117,13 +117,21 @@ function useFloat(amplitude: number, duration: number, delay: number) {
   return anim;
 }
 
+const GALLERY_W = 680;
+const GALLERY_H = 560;
+
 function PhoneGallery({ screenshots, color, layout = 'stagger' }: { screenshots: any[]; color: string; layout?: GalleryLayout }) {
   if (!screenshots || screenshots.length < 3) return null;
+  const { width } = useWindowDimensions();
+  const isMobile = width < 768;
   const f0 = useFloat(12, 2000, 0);
   const f1 = useFloat(10, 1800, 400);
   const f2 = useFloat(9,  1600, 700);
 
-  return (
+  const scale = isMobile ? Math.min(1, (width - 32) / GALLERY_W) : 1;
+  const scaledH = Math.round(GALLERY_H * scale);
+
+  const galleryContent = (
     <View style={[galSt.wrap, { overflow: 'visible' } as any]}>
       <View style={[galSt.glow, { backgroundColor: color + '18' }]} />
 
@@ -179,20 +187,42 @@ function PhoneGallery({ screenshots, color, layout = 'stagger' }: { screenshots:
       </>}
     </View>
   );
+
+  if (isMobile) {
+    const availableW = width - 32;
+    return (
+      <View style={{ width: availableW, height: scaledH }}>
+        <View style={{
+          position: 'absolute',
+          width: GALLERY_W,
+          height: GALLERY_H,
+          left: (availableW - GALLERY_W) / 2,
+          top: (scaledH - GALLERY_H) / 2,
+          transform: [{ scale }],
+        }}>
+          {galleryContent}
+        </View>
+      </View>
+    );
+  }
+
+  return galleryContent;
 }
 
 // ─── Featured Card ──────────────────────────────────────────────────────────
 
 function FeaturedCard({ project }: { project: FeaturedProject }) {
+  const { width } = useWindowDimensions();
+  const isMobile = width < 768;
   const color = project.categoryColor;
   return (
-    <View style={styles.featuredCard}>
+    <View style={[styles.featuredCard, isMobile && styles.featuredCardMobile]}>
       {/* Accent strip */}
       <View style={[styles.featuredAccent, { backgroundColor: color }]} />
 
       {/* Content row: info + phone gallery */}
-      <View style={styles.featuredRow}>
-        <View style={styles.featuredBody}>
+      <View style={[styles.featuredRow, isMobile && styles.featuredRowMobile]}>
+        <View style={[styles.featuredBody, isMobile && styles.featuredBodyMobile]}>
           {/* Header row */}
           <View style={styles.featuredHead}>
             <View style={styles.featuredHeadLeft}>
@@ -216,7 +246,7 @@ function FeaturedCard({ project }: { project: FeaturedProject }) {
           <Text style={styles.featuredDesc}>{project.description}</Text>
 
           {/* Two-column: features + achievements */}
-          <View style={styles.infoRow}>
+          <View style={[styles.infoRow, isMobile && styles.infoRowMobile]}>
             {/* 핵심기능 */}
             <View style={styles.infoCol}>
               <Text style={[styles.infoSectionTitle, { color }]}>핵심기능</Text>
@@ -260,7 +290,7 @@ function FeaturedCard({ project }: { project: FeaturedProject }) {
 
         {/* Phone Gallery */}
         {project.screenshots && project.screenshots.length >= 3 && (
-          <View style={[styles.phoneGalleryWrap, { borderLeftColor: color + '15' }]}>
+          <View style={[styles.phoneGalleryWrap, { borderLeftColor: color + '15' }, isMobile && styles.phoneGalleryWrapMobile]}>
             <PhoneGallery screenshots={project.screenshots} color={color} />
           </View>
         )}
@@ -340,8 +370,11 @@ interface ProjectsProps {
 }
 
 export default function Projects({ onLayout }: ProjectsProps) {
+  const { width } = useWindowDimensions();
+  const isMobile = width < 768;
   const personalScrollRef = useRef<any>(null);
   const sideScrollRef = useRef<any>(null);
+  const aiToolScrollRef = useRef<any>(null);
   const [cardWidth, setCardWidth] = useState(352);
 
   useEffect(() => {
@@ -349,12 +382,13 @@ export default function Projects({ onLayout }: ProjectsProps) {
 
     // Inject CSS to hide scrollbars
     const styleId = 'hscroll-style';
-    if (!document.getElementById(styleId)) {
-      const style = document.createElement('style');
-      style.id = styleId;
-      style.textContent = `#personal-project-scroll::-webkit-scrollbar,#side-project-scroll::-webkit-scrollbar{display:none!important}#personal-project-scroll,#side-project-scroll{scrollbar-width:none!important;-ms-overflow-style:none!important;}`;
-      document.head.appendChild(style);
+    let styleEl = document.getElementById(styleId) as HTMLStyleElement | null;
+    if (!styleEl) {
+      styleEl = document.createElement('style');
+      styleEl.id = styleId;
+      document.head.appendChild(styleEl);
     }
+    styleEl.textContent = `#personal-project-scroll::-webkit-scrollbar,#side-project-scroll::-webkit-scrollbar,#ai-tool-scroll::-webkit-scrollbar{display:none!important}#personal-project-scroll,#side-project-scroll,#ai-tool-scroll{scrollbar-width:none!important;-ms-overflow-style:none!important;}`;
 
     const setupDrag = (el: HTMLElement) => {
       let isDown = false;
@@ -391,15 +425,16 @@ export default function Projects({ onLayout }: ProjectsProps) {
     const cleanups: (() => void)[] = [];
     if (personalScrollRef.current) cleanups.push(setupDrag(personalScrollRef.current));
     if (sideScrollRef.current) cleanups.push(setupDrag(sideScrollRef.current));
+    if (aiToolScrollRef.current) cleanups.push(setupDrag(aiToolScrollRef.current));
     return () => cleanups.forEach((c) => c());
   }, []);
 
   return (
-    <View style={styles.section} onLayout={onLayout} nativeID="projects">
-      <View style={styles.inner} onLayout={(e) => setCardWidth(e.nativeEvent.layout.width * 0.285)}>
+    <View style={[styles.section, isMobile && styles.sectionMobile]} onLayout={onLayout} nativeID="projects">
+      <View style={styles.inner} onLayout={(e) => setCardWidth(isMobile ? e.nativeEvent.layout.width * 0.9 : e.nativeEvent.layout.width * 0.285)}>
         <View style={styles.header}>
           <Text style={styles.sectionLabel}>Projects</Text>
-          <Text style={styles.sectionTitle}>주요 프로젝트</Text>
+          <Text style={[styles.sectionTitle, isMobile && styles.sectionTitleMobile]}>주요 프로젝트</Text>
           <Text style={styles.sectionSub}>실제 서비스에서 만들어낸 성과들입니다</Text>
         </View>
 
@@ -424,10 +459,16 @@ export default function Projects({ onLayout }: ProjectsProps) {
                 <View style={styles.categoryDivider} />
               </View>
               {cat === 'AI툴' ? (
-                <View style={styles.additionalGrid}>
-                  {group.map((project, i) => (
-                    <AdditionalCard key={i} project={project} cardWidth={cardWidth} />
-                  ))}
+                <View
+                  ref={aiToolScrollRef}
+                  nativeID="ai-tool-scroll"
+                  style={styles.hScrollOuter as any}
+                >
+                  <View style={styles.additionalGridH}>
+                    {group.map((project, i) => (
+                      <AdditionalCard key={i} project={project} horizontal cardWidth={cardWidth} />
+                    ))}
+                  </View>
                 </View>
               ) : (
                 <View
@@ -484,6 +525,42 @@ const styles = StyleSheet.create({
   sectionSub: {
     fontSize: 16,
     color: C.textSub,
+  },
+
+  // Mobile overrides
+  sectionMobile: {
+    paddingHorizontal: 16,
+    paddingVertical: 48,
+  },
+  sectionTitleMobile: {
+    fontSize: 26,
+  },
+  featuredCardMobile: {
+    flexDirection: 'column',
+  },
+  featuredRowMobile: {
+    flexDirection: 'column',
+  },
+  featuredBodyMobile: {
+    padding: 16,
+  },
+  infoRowMobile: {
+    flexDirection: 'column',
+    gap: 16,
+  },
+  phoneGalleryWrapMobile: {
+    width: '100%' as any,
+    borderLeftWidth: 0,
+    borderTopWidth: 1,
+    borderTopColor: '#e4e4e7',
+    paddingVertical: 24,
+    paddingHorizontal: 0,
+    alignItems: 'center',
+    overflow: 'visible' as any,
+  },
+  mobilePhoneWrap: {
+    transform: [{ scale: 0.75 }],
+    marginVertical: -60,
   },
 
   // Featured grid

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, LayoutChangeEvent } from 'react-native';
+import { View, Text, StyleSheet, LayoutChangeEvent, useWindowDimensions } from 'react-native';
 import C from '../theme/colors';
 
 interface Pillar {
@@ -46,12 +46,15 @@ interface AboutProps {
 }
 
 export default function About({ onLayout }: AboutProps) {
+  const { width } = useWindowDimensions();
+  const isMobile = width < 768;
+
   return (
-    <View style={styles.section} onLayout={onLayout} nativeID="about">
+    <View style={[styles.section, isMobile && styles.sectionMobile]} onLayout={onLayout} nativeID="about">
       <View style={styles.inner}>
         <View style={styles.header}>
           <Text style={styles.sectionLabel}>About</Text>
-          <Text style={styles.sectionTitle}>아키텍처 설계부터 CI/CD 자동화, AI 활용까지</Text>
+          <Text style={[styles.sectionTitle, isMobile && styles.sectionTitleMobile]}>아키텍처 설계부터 CI/CD 자동화, AI 활용까지</Text>
         </View>
 
         <View style={styles.pillarsGrid}>
@@ -73,6 +76,14 @@ const styles = StyleSheet.create({
     backgroundColor: C.bgAlt,
     paddingVertical: 64,
     paddingHorizontal: 40,
+  },
+  sectionMobile: {
+    paddingHorizontal: 16,
+    paddingVertical: 48,
+  },
+  sectionTitleMobile: {
+    fontSize: 22,
+    letterSpacing: -0.4,
   },
   inner: {
     maxWidth: 1100,

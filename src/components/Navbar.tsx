@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Platform, useWindowDimensions } from 'react-native';
 import C from '../theme/colors';
 
 const NAV_HEIGHT = 64;
@@ -16,6 +16,8 @@ interface NavbarProps {
 }
 
 export default function Navbar({ onNavigate }: NavbarProps) {
+  const { width } = useWindowDimensions();
+  const isMobile = width < 768;
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('');
 
@@ -42,11 +44,12 @@ export default function Navbar({ onNavigate }: NavbarProps) {
               key={link.id}
               onPress={() => handleNav(link.id)}
               activeOpacity={0.7}
-              style={styles.linkBtn}
+              style={[styles.linkBtn, isMobile && styles.linkBtnMobile]}
             >
               <Text
                 style={[
                   styles.linkText,
+                  isMobile && styles.linkTextMobile,
                   activeSection === link.id && styles.linkTextActive,
                 ]}
               >
@@ -83,7 +86,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 32,
+    paddingHorizontal: 8,
     maxWidth: 1200,
     alignSelf: 'center',
     width: '100%',
@@ -98,10 +101,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 8,
   },
+  linkBtnMobile: {
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+  },
   linkText: {
     color: C.textSub,
     fontSize: 14,
     fontWeight: '500',
+  },
+  linkTextMobile: {
+    fontSize: 12,
   },
   linkTextActive: {
     color: C.accent,

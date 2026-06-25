@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { View, Text, Image, Animated, StyleSheet, LayoutChangeEvent } from 'react-native';
+import { View, Text, Image, Animated, StyleSheet, LayoutChangeEvent, useWindowDimensions } from 'react-native';
 import { career } from '../data/portfolio';
 import C from '../theme/colors';
 
@@ -80,6 +80,8 @@ function StepCard({ company, isCurrent }: { company: StepCompany; isCurrent: boo
 }
 
 export default function Career({ onLayout, scrollY, sectionY }: CareerProps) {
+  const { width } = useWindowDimensions();
+  const isMobile = width < 768;
   const pendingYs = useRef<Record<number, number>>({});
   const [stepYs, setStepYs] = useState<number[]>([]);
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -96,11 +98,11 @@ export default function Career({ onLayout, scrollY, sectionY }: CareerProps) {
   const characterTop = stepYs.length >= 3 ? stepYs[2] + ROW_PAD_TOP - CHAR_H : -300;
 
   return (
-    <View style={styles.section} onLayout={onLayout} nativeID="career">
+    <View style={[styles.section, isMobile && styles.sectionMobile]} onLayout={onLayout} nativeID="career">
       <View style={styles.inner}>
         <View style={styles.header}>
           <Text style={styles.sectionLabel}>Career</Text>
-          <Text style={styles.sectionTitle}>경력 사항</Text>
+          <Text style={[styles.sectionTitle, isMobile && styles.sectionTitleMobile]}>경력 사항</Text>
         </View>
 
         <View style={styles.journey}>
@@ -110,9 +112,11 @@ export default function Career({ onLayout, scrollY, sectionY }: CareerProps) {
           </View>
 
           {/* Animated character — centered on the line */}
-          <Animated.View style={[styles.characterWrap, { top: characterTop, opacity: fadeAnim }]}>
-            <PersonIcon color="#F97316" />
-          </Animated.View>
+          {!isMobile && (
+            <Animated.View style={[styles.characterWrap, { top: characterTop, opacity: fadeAnim }]}>
+              <PersonIcon color="#F97316" />
+            </Animated.View>
+          )}
 
           {/* Zigzag steps */}
           {steps.map((company, idx) => {
@@ -121,38 +125,35 @@ export default function Career({ onLayout, scrollY, sectionY }: CareerProps) {
             return (
               <View
                 key={company.id}
-                style={[styles.stepRow, idx === steps.length - 1 && { marginBottom: 0 }]}
+                style={[styles.stepRow, isMobile && styles.stepRowMobile, idx === steps.length - 1 && { marginBottom: 0 }]}
                 onLayout={(e) => handleBlockLayout(idx, e)}
               >
-                {/* Left side */}
-                <View style={styles.side}>
-                  {isLeft && <StepCard company={company} isCurrent={isCurrent} />}
-                </View>
-
-                {/* Center dot */}
-                <View style={styles.dotCol}>
-                  <View
-                    style={[
-                      styles.dot,
-                      {
-                        backgroundColor: company.color + '15',
-                        borderColor: isCurrent ? company.color : company.color + '55',
-                        borderWidth: isCurrent ? 2.5 : 1.5,
-                      },
-                    ]}
-                  >
-                    <Image
-                      source={companyLogos[company.id]}
-                      style={styles.dotLogo}
-                      resizeMode="contain"
-                    />
-                  </View>
-                </View>
-
-                {/* Right side */}
-                <View style={styles.side}>
-                  {!isLeft && <StepCard company={company} isCurrent={isCurrent} />}
-                </View>
+                {isMobile ? (
+                  <>
+                    <View style={[styles.dotCol, styles.dotColMobile]}>
+                      <View style={[styles.dot, { backgroundColor: company.color + '15', borderColor: isCurrent ? company.color : company.color + '55', borderWidth: isCurrent ? 2.5 : 1.5 }]}>
+                        <Image source={companyLogos[company.id]} style={styles.dotLogo} resizeMode="contain" />
+                      </View>
+                    </View>
+                    <View style={styles.mobileSide}>
+                      <StepCard company={company} isCurrent={isCurrent} />
+                    </View>
+                  </>
+                ) : (
+                  <>
+                    <View style={styles.side}>
+                      {isLeft && <StepCard company={company} isCurrent={isCurrent} />}
+                    </View>
+                    <View style={styles.dotCol}>
+                      <View style={[styles.dot, { backgroundColor: company.color + '15', borderColor: isCurrent ? company.color : company.color + '55', borderWidth: isCurrent ? 2.5 : 1.5 }]}>
+                        <Image source={companyLogos[company.id]} style={styles.dotLogo} resizeMode="contain" />
+                      </View>
+                    </View>
+                    <View style={styles.side}>
+                      {!isLeft && <StepCard company={company} isCurrent={isCurrent} />}
+                    </View>
+                  </>
+                )}
               </View>
             );
           })}
@@ -167,6 +168,26 @@ const styles = StyleSheet.create({
     backgroundColor: C.bg,
     paddingVertical: 64,
     paddingHorizontal: 40,
+  },
+  sectionMobile: {
+    paddingHorizontal: 16,
+    paddingVertical: 48,
+  },
+  sectionTitleMobile: {
+    fontSize: 26,
+  },
+  stepRowMobile: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 24,
+    gap: 12,
+  },
+  dotColMobile: {
+    width: 52,
+    paddingTop: 12,
+  },
+  mobileSide: {
+    flex: 1,
   },
   inner: {
     maxWidth: 1000,

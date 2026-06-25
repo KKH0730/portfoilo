@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, Linking, LayoutChangeEvent } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, Linking, LayoutChangeEvent, useWindowDimensions } from 'react-native';
 import { personal, stats } from '../data/portfolio';
 import C from '../theme/colors';
 
@@ -14,12 +14,14 @@ interface HeroProps {
 }
 
 export default function Hero({ onLayout }: HeroProps) {
+  const { width } = useWindowDimensions();
+  const isMobile = width < 768;
   const openLink = (url: string) => Linking.openURL(url);
 
   return (
-    <View style={styles.section} onLayout={onLayout} nativeID="hero">
+    <View style={[styles.section, isMobile && styles.sectionMobile]} onLayout={onLayout} nativeID="hero">
       <View style={styles.inner}>
-        <View style={styles.twoCol}>
+        <View style={[styles.twoCol, isMobile && styles.twoColMobile]}>
 
           {/* ── Left: text ── */}
           <View style={styles.leftCol}>
@@ -31,14 +33,14 @@ export default function Hero({ onLayout }: HeroProps) {
 
             {/* Name */}
             <View style={styles.nameBlock}>
-              <View style={styles.nameRow}>
-                <Text style={styles.nameEn}>{personal.nameEn}</Text>
-                <Text style={styles.nameKo}>{personal.name}</Text>
+              <View style={[styles.nameRow, isMobile && styles.nameRowMobile]}>
+                <Text style={[styles.nameEn, isMobile && styles.nameEnMobile]}>{personal.nameEn}</Text>
+                <Text style={[styles.nameKo, isMobile && styles.nameKoMobile]}>{personal.name}</Text>
               </View>
             </View>
 
             {/* Tagline */}
-            <Text style={styles.tagline}>
+            <Text style={[styles.tagline, isMobile && styles.taglineMobile]}>
               주도적으로 성과를 만드는{'\n'}
               <Text style={styles.taglineAccent}>개발자</Text>입니다
             </Text>
@@ -102,15 +104,17 @@ export default function Hero({ onLayout }: HeroProps) {
           </View>
 
           {/* ── Right: photo ── */}
-          <View style={styles.rightCol}>
-            <View style={styles.photoWrap}>
-              <Image
-                source={require('../../assets/profile.jpg')}
-                style={styles.photo}
-                resizeMode="cover"
-              />
+          {!isMobile && (
+            <View style={styles.rightCol}>
+              <View style={styles.photoWrap}>
+                <Image
+                  source={require('../../assets/profile.jpg')}
+                  style={styles.photo}
+                  resizeMode="cover"
+                />
+              </View>
             </View>
-          </View>
+          )}
 
         </View>
       </View>
@@ -309,6 +313,41 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
 
+  // Mobile overrides
+  sectionMobile: {
+    paddingHorizontal: 20,
+    paddingTop: 56,
+    paddingBottom: 48,
+  },
+  twoColMobile: {
+    flexDirection: 'column',
+    gap: 32,
+  },
+  nameRowMobile: {
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  nameEnMobile: {
+    fontSize: 38,
+    letterSpacing: -1,
+    lineHeight: 44,
+  },
+  nameKoMobile: {
+    fontSize: 18,
+  },
+  taglineMobile: {
+    fontSize: 20,
+    lineHeight: 30,
+  },
+  rightColMobile: {
+    paddingTop: 0,
+    alignItems: 'center',
+  },
+  photoWrapMobile: {
+    width: 200,
+    height: 244,
+  },
+
   // Right: photo
   rightCol: {
     alignItems: 'center',
@@ -326,6 +365,11 @@ const styles = StyleSheet.create({
     width: 260,
     height: 320,
     borderRadius: 24,
+  },
+  photoMobile: {
+    width: 190,
+    height: 234,
+    borderRadius: 18,
   },
   photoBorder: {
     position: 'absolute',

@@ -1,9 +1,11 @@
 import React, { useRef } from 'react';
-import { View, Text, Image, StyleSheet, LayoutChangeEvent, Animated } from 'react-native';
+import { View, Text, Image, StyleSheet, LayoutChangeEvent, Animated, useWindowDimensions } from 'react-native';
 import { skills, aiTools, devEnvironment, SkillCategory as SkillCategoryType } from '../data/portfolio';
 import C from '../theme/colors';
 
 function EnvChip({ tool }: { tool: (typeof devEnvironment)[0] }) {
+  const { width } = useWindowDimensions();
+  const isMobile = width < 768;
   const scale = useRef(new Animated.Value(1)).current;
 
   const onHoverIn = () =>
@@ -11,22 +13,31 @@ function EnvChip({ tool }: { tool: (typeof devEnvironment)[0] }) {
   const onHoverOut = () =>
     Animated.spring(scale, { toValue: 1, useNativeDriver: true, speed: 30, bounciness: 6 }).start();
 
+  // 모바일: 3열 (섹션패딩 32 + 칩gap 2*8 = 48)
+  const chipWidth = isMobile ? Math.floor((width - 48) / 3) : undefined;
+
   return (
     <Animated.View
-      style={[styles.envChip, { borderColor: tool.color + '70', transform: [{ scale }] }]}
+      style={[
+        styles.envChip,
+        { borderColor: tool.color + '70', transform: [{ scale }] },
+        isMobile && { flex: 0, flexBasis: chipWidth, width: chipWidth, minWidth: 0 },
+      ]}
       {...({ onMouseEnter: onHoverIn, onMouseLeave: onHoverOut } as any)}
     >
-      <View style={[styles.envChipIconWrap, { backgroundColor: tool.color + '12' }]}>
-        <Image source={tool.logo} style={styles.envChipLogo} resizeMode="contain" />
+      <View style={[styles.envChipIconWrap, { backgroundColor: tool.color + '12' }, isMobile && styles.envChipIconWrapMobile]}>
+        <Image source={tool.logo} style={[styles.envChipLogo, isMobile && styles.envChipLogoMobile]} resizeMode="contain" />
       </View>
-      <Text style={styles.envChipName}>{tool.name}</Text>
+      <Text style={[styles.envChipName, isMobile && styles.envChipNameMobile]}>{tool.name}</Text>
     </Animated.View>
   );
 }
 
 function SkillCategoryCard({ category, icon, keyItems, items }: SkillCategoryType) {
+  const { width } = useWindowDimensions();
+  const isMobile = width < 768;
   return (
-    <View style={styles.categoryCard}>
+    <View style={[styles.categoryCard, isMobile && { width: '100%' as any }]}>
       <View style={styles.categoryHeader}>
         <Text style={styles.categoryIcon}>{icon}</Text>
         <Text style={styles.categoryName}>{category}</Text>
@@ -73,15 +84,18 @@ interface SkillsProps {
 }
 
 export default function Skills({ onLayout }: SkillsProps) {
+  const { width } = useWindowDimensions();
+  const isMobile = width < 768;
+
   return (
-    <View style={styles.section} onLayout={onLayout} nativeID="skills">
+    <View style={[styles.section, isMobile && styles.sectionMobile]} onLayout={onLayout} nativeID="skills">
       <View style={styles.inner}>
         <View style={styles.header}>
           <Text style={styles.sectionLabel}>Skills</Text>
-          <Text style={styles.sectionTitle}>기술 스택</Text>
+          <Text style={[styles.sectionTitle, isMobile && styles.sectionTitleMobile]}>기술 스택</Text>
         </View>
 
-        <View style={styles.skillsGrid}>
+        <View style={[styles.skillsGrid, isMobile && styles.skillsGridMobile]}>
           {skills.map((cat, i) => (
             <SkillCategoryCard key={i} {...cat} />
           ))}
@@ -90,7 +104,7 @@ export default function Skills({ onLayout }: SkillsProps) {
         {/* 개발 협업 환경 */}
         <View style={styles.envSection}>
           <Text style={styles.envTitle}>개발 협업 환경</Text>
-          <View style={styles.envChips}>
+          <View style={[styles.envChips, isMobile && styles.envChipsMobile]}>
             {(['개발 도구', '버전 관리 & CI/CD', '디자인', '협업 & 커뮤니케이션'] as const).flatMap(
               (groupName, gi) => {
                 const tools = devEnvironment.filter((t) => t.group === groupName);
@@ -104,7 +118,7 @@ export default function Skills({ onLayout }: SkillsProps) {
           </View>
         </View>
 
-        <View style={styles.aiSection}>
+        <View style={[styles.aiSection, isMobile && styles.aiSectionMobile]}>
           <View style={styles.aiHeader}>
             <View style={styles.aiTitleRow}>
               <Text style={styles.aiTitleIcon}>✦</Text>
@@ -147,6 +161,19 @@ const styles = StyleSheet.create({
     paddingVertical: 64,
     paddingHorizontal: 40,
   },
+  sectionMobile: {
+    paddingHorizontal: 16,
+    paddingVertical: 48,
+  },
+  sectionTitleMobile: {
+    fontSize: 26,
+  },
+  skillsGridMobile: {
+    flexDirection: 'column',
+  },
+  aiSectionMobile: {
+    padding: 20,
+  },
   inner: {
     maxWidth: 1100,
     alignSelf: 'center',
@@ -176,7 +203,7 @@ const styles = StyleSheet.create({
     marginBottom: 60,
   },
   categoryCard: {
-    width: '32%',
+    width: '32%' as any,
     backgroundColor: C.white,
     borderRadius: 16,
     padding: 22,
@@ -274,6 +301,11 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     gap: 12,
   },
+  envChipsMobile: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
   envChip: {
     flex: 1,
     alignItems: 'center',
@@ -291,15 +323,27 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  envChipIconWrapMobile: {
+    width: 34,
+    height: 34,
+    borderRadius: 9,
+  },
   envChipLogo: {
     width: 30,
     height: 30,
+  },
+  envChipLogoMobile: {
+    width: 22,
+    height: 22,
   },
   envChipName: {
     fontSize: 11,
     fontWeight: '700',
     color: C.text,
     textAlign: 'center',
+  },
+  envChipNameMobile: {
+    fontSize: 9,
   },
 
   aiSection: {

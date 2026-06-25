@@ -5,11 +5,11 @@ import C from '../theme/colors';
 
 // ─── Phone Mockup ─────────────────────────────────────────────────────────────
 
-const PHONE_W = 112;
-const PHONE_H = 232;
-const PHONE_RADIUS = 22;
-const SCREEN_RADIUS = 18;
-const BEZEL = 7;
+const PHONE_W = 240;
+const PHONE_H = 490;
+const PHONE_RADIUS = 36;
+const SCREEN_RADIUS = 30;
+const BEZEL = 11;
 
 function PhoneMockup({ source, style }: { source: any; style?: any }) {
   return (
@@ -17,8 +17,8 @@ function PhoneMockup({ source, style }: { source: any; style?: any }) {
       {/* Side button */}
       <View style={phoneSt.sideBtn} />
       {/* Volume buttons */}
-      <View style={[phoneSt.volBtn, { top: 56 }]} />
-      <View style={[phoneSt.volBtn, { top: 80 }]} />
+      <View style={[phoneSt.volBtn, { top: 110 }]} />
+      <View style={[phoneSt.volBtn, { top: 155 }]} />
       {/* Screen */}
       <View style={phoneSt.screen}>
         <Image source={source} style={phoneSt.screenImg} resizeMode="cover" />
@@ -391,7 +391,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 40,
   },
   inner: {
-    maxWidth: 1100,
+    maxWidth: 1440,
     alignSelf: 'center',
     width: '100%',
   },
@@ -450,13 +450,13 @@ const styles = StyleSheet.create({
     padding: 28,
   },
   phoneGalleryWrap: {
-    width: 340,
+    width: 720,
     flexShrink: 0,
     alignItems: 'center',
     justifyContent: 'center',
     borderLeftWidth: 1,
-    paddingVertical: 28,
-    paddingHorizontal: 16,
+    paddingVertical: 32,
+    paddingHorizontal: 24,
     backgroundColor: C.bgAlt,
   },
 
@@ -771,23 +771,23 @@ const styles = StyleSheet.create({
 
 const galSt = StyleSheet.create({
   wrap: {
-    width: 300,
-    height: 280,
+    width: 680,
+    height: 560,
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
   },
   glow: {
     position: 'absolute',
-    width: 260,
-    height: 220,
-    borderRadius: 130,
-    top: 20,
-    left: 20,
+    width: 560,
+    height: 420,
+    borderRadius: 280,
+    top: 50,
+    left: 50,
   },
   phoneLeft: {
     position: 'absolute',
-    left: 8,
+    left: 20,
     zIndex: 1,
   },
   phoneCenter: {
@@ -798,7 +798,7 @@ const galSt = StyleSheet.create({
   },
   phoneRight: {
     position: 'absolute',
-    right: 8,
+    right: 20,
     zIndex: 2,
   },
 });

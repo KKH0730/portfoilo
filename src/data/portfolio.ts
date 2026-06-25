@@ -354,10 +354,10 @@ export const featuredProjects: FeaturedProject[] = [
     description:
       '피카 PC방 서비스의 Android 앱 개발. 7,000+ 매장 도입 주방 앱 단독 개발부터 소셜 로그인 계정 통합, AI 기반 CI/CD 자동화까지 핵심 기능 전반을 담당했습니다.',
     features: [
-      'FCM 기반 실시간 주문 알림 및 자동 갱신 (7,000+ PC방 주방 앱)',
-      'PG사 연동 결제 기능 (오류 추적·개선)',
-      'Google·Naver·Kakao·Apple 소셜 로그인 통합',
-      '애드팝콘 SSP 광고 수익화',
+      'Google·Naver·Kakao·Apple 소셜 로그인 4종 및 계정 통합으로 모든 PC방 간편 이용',
+      '현위치 기반 PC방 탐색 (지도·리스트뷰, 사양·편의시설·페이 가맹 다중 필터)',
+      'QR코드 스캔으로 PC 즉시 로그인·결제',
+      '광고 시청 마일리지 리워드 및 스낵 게임 (달고나 뽑기·점핑캣 등)',
     ],
     highlights: [
       { icon: '📱', text: '앱 설치 19.3% 증가 (30만 → 35.8만)' },
@@ -367,10 +367,10 @@ export const featuredProjects: FeaturedProject[] = [
     ],
     stack: ['Kotlin', 'MVVM', 'Hilt', 'Jetpack Compose', 'Databinding', 'Coroutine', 'Flow', 'Retrofit2', 'OkHttp3', 'CameraX', 'ML Kit', 'FCM', 'Firebase', 'AdPopcorn SSP', 'OAuth 2.0', 'GitLab CI/CD', 'Claude Code CLI', 'Claude AI'],
     screenshots: [
-      require('../../assets/screenshots/pikaplay_1.jpg'),
-      require('../../assets/screenshots/pikaplay_2.jpg'),
-      require('../../assets/screenshots/pikaplay_3.jpg'),
-      require('../../assets/screenshots/pikaplay_4.jpg'),
+      { uri: '/screenshots/pikaplay_1.jpg' },
+      { uri: '/screenshots/pikaplay_3.jpg' },
+      { uri: '/screenshots/pikaplay_2.jpg' },
+      { uri: '/screenshots/pikaplay_4.jpg' },
     ],
   },
   {
@@ -397,10 +397,10 @@ export const featuredProjects: FeaturedProject[] = [
     ],
     stack: ['Kotlin', 'MVVM', 'Hilt', 'AAC', 'Databinding', 'RxJava', 'Coroutine', 'Retrofit2', 'OkHttp3', 'Gson', 'Glide', 'WebSocket', 'In-app Billing', 'Firebase', 'Jenkins', 'GitLab'],
     screenshots: [
-      require('../../assets/screenshots/maimovie_1.jpg'),
-      require('../../assets/screenshots/maimovie_2.jpg'),
-      require('../../assets/screenshots/maimovie_3.jpg'),
-      require('../../assets/screenshots/maimovie_4.jpg'),
+      { uri: '/screenshots/maimovie_1.jpg' },
+      { uri: '/screenshots/maimovie_2.jpg' },
+      { uri: '/screenshots/maimovie_3.jpg' },
+      { uri: '/screenshots/maimovie_4.jpg' },
     ],
   },
   {
@@ -414,7 +414,7 @@ export const featuredProjects: FeaturedProject[] = [
     description:
       '반려동물 건강 스마트 관리 앱 전체 개발. 소변검사 키트 카메라 ROI 추출, AI 기반 질병 진단, e-commerce 결제·멤버십 구독 기능을 구현했습니다.',
     features: [
-      '소변검사 키트 카메라 ROI 추출 및 AI 분석 (정확도 15% 향상)',
+      '소변검사 키트 카메라 촬영 → AI 자동 분석으로 건강 상태 확인',
       'AI 기반 반려동물 신체 질병 진단',
       '반려용품 e-commerce 결제 및 멤버십 구독',
       '반려동물 건강 기록 및 이력 관리',
@@ -427,10 +427,10 @@ export const featuredProjects: FeaturedProject[] = [
     ],
     stack: ['Kotlin', 'MVVM', 'Hilt', 'AAC', 'Databinding', 'RxJava', 'Coroutine', 'Retrofit2', 'OkHttp3', 'Gson', 'Glide', 'OpenCV', 'In-app Billing', 'Firebase'],
     screenshots: [
-      require('../../assets/screenshots/alphado_1.jpg'),
-      require('../../assets/screenshots/alphado_2.jpg'),
-      require('../../assets/screenshots/alphado_3.jpg'),
-      require('../../assets/screenshots/alphado_4.jpg'),
+      { uri: '/screenshots/alphado_1.jpg' },
+      { uri: '/screenshots/alphado_3.jpg' },
+      { uri: '/screenshots/alphado_2.jpg' },
+      { uri: '/screenshots/alphado_4.jpg' },
     ],
   },
 ];
